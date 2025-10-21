@@ -1,0 +1,78 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isValidSize(maxSizeMB) {
+      return request.resource.size <= maxSizeMB * 1024 * 1024;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isAudio() {
+      return request.resource.contentType.matches('audio/.*');
+    }
+
+    function isVideo() {
+      return request.resource.contentType.matches('video/.*');
+    }
+
+    // Media files: /media/{userId}/{filename}
+    match /media/{userId}/{filename} {
+      // Owner can read their own media
+      allow read: if isAuthenticated() && isOwner(userId);
+
+      // Owner can upload media with size limits
+      allow create: if isAuthenticated() &&
+                       isOwner(userId) &&
+                       (
+                         (isImage() && isValidSize(10)) ||
+                         (isAudio() && isValidSize(20)) ||
+                         (isVideo() && isValidSize(200))
+                       );
+
+      // Owner can delete their own media
+      allow delete: if isAuthenticated() && isOwner(userId);
+
+      // No updates allowed (delete and recreate instead)
+      allow update: if false;
+    }
+
+    // Shared media (for messages sent to others): /shared/{messageId}/{filename}
+    match /shared/{messageId}/{filename} {
+      // TODO: Check if user is a recipient of the message
+      // This would require a Firestore read, which isn't directly possible in Storage rules
+      // For now, we rely on obscurity (only recipients know the message ID)
+      allow read: if isAuthenticated();
+
+      allow write: if isAuthenticated();
+    }
+
+    // Profile pictures: /profiles/{userId}/{filename}
+    match /profiles/{userId}/{filename} {
+      // Anyone authenticated can read profile pictures
+      allow read: if isAuthenticated();
+
+      // Only owner can upload/update their profile picture
+      allow write: if isAuthenticated() &&
+                      isOwner(userId) &&
+                      isImage() &&
+                      isValidSize(5); // 5MB max for profile pictures
+    }
+
+    // Default deny for all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

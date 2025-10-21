@@ -1,0 +1,216 @@
+{
+  "appName": "Whispr",
+  "tagline": "הודעה לעתיד שלך",
+  "description": "תקשורת רגשית עם עצמך בזמן - כתיבת הודעות לעתיד, פתיחתן בתאריך יעד, וניהול תאריכים רגשיים",
+
+  "nav": {
+    "now": "הווה",
+    "create": "יצירה",
+    "events": "זיכרונות",
+    "timeline": "ציר זמן",
+    "settings": "הגדרות"
+  },
+
+  "auth": {
+    "login": "התחברות",
+    "register": "הרשמה",
+    "logout": "התנתקות",
+    "email": "דואר אלקטרוני",
+    "password": "סיסמה",
+    "displayName": "שם תצוגה",
+    "forgotPassword": "שכחתי סיסמה",
+    "dontHaveAccount": "אין לך חשבון?",
+    "alreadyHaveAccount": "כבר יש לך חשבון?",
+    "signInWithGoogle": "התחבר עם Google",
+    "createAccount": "צור חשבון"
+  },
+
+  "cube": {
+    "swipeUp": "החלק למעלה ליצירת הודעה",
+    "swipeDown": "החלק למטה לזיכרונות",
+    "swipeHorizontal": "החלק לצדדים לציר הזמן"
+  },
+
+  "now": {
+    "title": "הווה",
+    "subtitle": "הודעות ואירועים קרובים",
+    "noUpcoming": "אין הודעות קרובות",
+    "openToday": "נפתח היום",
+    "openThisWeek": "נפתח השבוע",
+    "upcomingEvents": "אירועים קרובים",
+    "readyToOpen": "מוכן להיפתח",
+    "notYetTime": "עדיין לא הגיע הזמן",
+    "openMessage": "פתח הודעה",
+    "timeRemaining": "זמן נותר"
+  },
+
+  "create": {
+    "title": "צור הודעה לעתיד",
+    "messageType": "סוג הודעה",
+    "text": "טקסט",
+    "audio": "הקלטת קול",
+    "video": "וידאו",
+    "image": "תמונה",
+    "titleLabel": "כותרת (אופציונלי)",
+    "titlePlaceholder": "תן שם להודעה שלך...",
+    "contentLabel": "תוכן",
+    "contentPlaceholder": "כתוב את מחשבותיך...",
+    "openDate": "תאריך פתיחה",
+    "recipients": "נמענים",
+    "self": "לעצמי",
+    "other": "לאחר",
+    "group": "קפסולה קבוצתית",
+    "emotionTone": "טון רגשי",
+    "encouragement": "עידוד",
+    "gratitude": "תודה",
+    "reflection": "רפלקציה",
+    "farewell": "פרידה",
+    "hope": "תקווה",
+    "other": "אחר",
+    "aiHelper": "עוזר AI",
+    "aiSuggestions": "הצעות ניסוח",
+    "getHelp": "קבל עזרה בניסוח",
+    "createMessage": "צור הודעה",
+    "recording": "מקליט...",
+    "stopRecording": "עצור הקלטה",
+    "uploadMedia": "העלה מדיה",
+    "addRecipient": "הוסף נמען"
+  },
+
+  "events": {
+    "title": "לוח שנה רגשי",
+    "subtitle": "תאריכים מיוחדים וזיכרונות",
+    "addEvent": "הוסף אירוע",
+    "eventKind": "סוג אירוע",
+    "birthday": "יום הולדת",
+    "anniversary": "יום נישואין",
+    "memorial_person": "זיכרון לאדם",
+    "memorial_pet": "זיכרון לחיית מחמד",
+    "personal_milestone": "אבן דרך אישית",
+    "eventTitle": "כותרת",
+    "eventDate": "תאריך",
+    "recurring": "חוזר שנתי",
+    "emotionTag": "תגית רגשית",
+    "happy": "שמח",
+    "calm": "שקט",
+    "memory": "זיכרון",
+    "longing": "געגוע",
+    "description": "תיאור",
+    "saveEvent": "שמור אירוע",
+    "deleteEvent": "מחק אירוע",
+    "editEvent": "ערוך אירוע",
+    "upcomingIn": "מתקרב בעוד",
+    "daysAgo": "לפני {{count}} יום",
+    "daysAgo_plural": "לפני {{count}} ימים"
+  },
+
+  "timeline": {
+    "title": "ציר הזמן",
+    "filterByType": "סנן לפי סוג",
+    "filterByEmotion": "סנן לפי רגש",
+    "all": "הכל",
+    "messages": "הודעות",
+    "events": "אירועים",
+    "capsules": "קפסולות",
+    "past": "עבר",
+    "future": "עתיד",
+    "today": "היום"
+  },
+
+  "capsule": {
+    "title": "קפסולה קבוצתית",
+    "create": "צור קפסולה",
+    "participants": "משתתפים",
+    "addParticipant": "הוסף משתתף",
+    "openDate": "תאריך פתיחה",
+    "opened": "נפתח",
+    "notOpened": "טרם נפתח",
+    "openedBy": "נפתח על ידי",
+    "waitingFor": "ממתין ל"
+  },
+
+  "notification": {
+    "messageOpen": "🕰️ יש לך לחישה מהעבר שלך",
+    "messageOpenBody": "ההודעה '{{title}}' מוכנה להיפתח",
+    "eventUpcoming": "מחר יום השנה של {{title}}",
+    "eventUpcomingBody": "תרצה לכתוב כמה מילים?",
+    "capsuleOpen": "הקפסולה '{{title}}' נפתחת היום",
+    "capsuleOpenBody": "ניפגש בפנים",
+    "insightReady": "התובנות החודשיות שלך מוכנות",
+    "insightReadyBody": "גלה מה למדת החודש"
+  },
+
+  "insights": {
+    "title": "תובנות AI",
+    "monthly": "תובנות חודשיות",
+    "weekly": "תובנות שבועיות",
+    "emotionBreakdown": "פירוק רגשי",
+    "topThemes": "נושאים מובילים",
+    "messageCount": "הודעות שנכתבו",
+    "viewInsights": "צפה בתובנות"
+  },
+
+  "subscription": {
+    "free": "חינם",
+    "pro": "Pro",
+    "family": "משפחה",
+    "therapist": "מטפל",
+    "upgrade": "שדרג",
+    "currentPlan": "התוכנית הנוכחית",
+    "features": {
+      "textMessages": "הודעות טקסט",
+      "audioVideo": "אודיו ווידאו",
+      "noAds": "ללא פרסומות",
+      "unlimitedCapsules": "קפסולות ללא הגבלה",
+      "therapistDashboard": "דשבורד מטפל"
+    },
+    "upgradeRequired": "שדרוג נדרש",
+    "upgradeMessage": "תכונה זו זמינה רק למנויי {{tier}}"
+  },
+
+  "settings": {
+    "title": "הגדרות",
+    "account": "חשבון",
+    "appearance": "מראה",
+    "notifications": "התראות",
+    "privacy": "פרטיות",
+    "language": "שפה",
+    "timezone": "אזור זמן",
+    "darkMode": "מצב כהה",
+    "auto": "אוטומטי",
+    "light": "בהיר",
+    "dark": "כהה",
+    "aiInsights": "תובנות AI",
+    "exportData": "ייצא נתונים",
+    "deleteAccount": "מחק חשבון"
+  },
+
+  "errors": {
+    "generic": "משהו השתבש",
+    "networkError": "בעיית רשת - נסה שנית",
+    "unauthorized": "אינך מורשה",
+    "notFound": "לא נמצא",
+    "encryptionFailed": "הצפנה נכשלה",
+    "decryptionFailed": "פענוח נכשל",
+    "uploadFailed": "העלאה נכשלה",
+    "invalidDate": "תאריך לא תקין",
+    "requiredField": "שדה חובה"
+  },
+
+  "common": {
+    "save": "שמור",
+    "cancel": "ביטול",
+    "delete": "מחק",
+    "edit": "ערוך",
+    "close": "סגור",
+    "open": "פתח",
+    "loading": "טוען...",
+    "search": "חיפוש",
+    "filter": "סינון",
+    "sort": "מיון",
+    "yes": "כן",
+    "no": "לא",
+    "confirm": "אישור",
+    "back": "חזור"
+  }
+}
