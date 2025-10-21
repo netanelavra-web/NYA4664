@@ -1,0 +1,216 @@
+{
+  "appName": "Whispr",
+  "tagline": "A Message to Your Future Self",
+  "description": "Emotional communication with yourself across time - write messages to the future, open them on target dates, and manage emotional dates",
+
+  "nav": {
+    "now": "Now",
+    "create": "Create",
+    "events": "Memories",
+    "timeline": "Timeline",
+    "settings": "Settings"
+  },
+
+  "auth": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "logout": "Log Out",
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Display Name",
+    "forgotPassword": "Forgot Password?",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInWithGoogle": "Sign in with Google",
+    "createAccount": "Create Account"
+  },
+
+  "cube": {
+    "swipeUp": "Swipe up to create a message",
+    "swipeDown": "Swipe down for memories",
+    "swipeHorizontal": "Swipe sideways for timeline"
+  },
+
+  "now": {
+    "title": "Now",
+    "subtitle": "Upcoming messages and events",
+    "noUpcoming": "No upcoming messages",
+    "openToday": "Opens today",
+    "openThisWeek": "Opens this week",
+    "upcomingEvents": "Upcoming events",
+    "readyToOpen": "Ready to open",
+    "notYetTime": "Not yet time",
+    "openMessage": "Open message",
+    "timeRemaining": "Time remaining"
+  },
+
+  "create": {
+    "title": "Create a Message to the Future",
+    "messageType": "Message Type",
+    "text": "Text",
+    "audio": "Voice Recording",
+    "video": "Video",
+    "image": "Image",
+    "titleLabel": "Title (optional)",
+    "titlePlaceholder": "Give your message a name...",
+    "contentLabel": "Content",
+    "contentPlaceholder": "Write your thoughts...",
+    "openDate": "Open Date",
+    "recipients": "Recipients",
+    "self": "To myself",
+    "other": "To someone else",
+    "group": "Group Capsule",
+    "emotionTone": "Emotional Tone",
+    "encouragement": "Encouragement",
+    "gratitude": "Gratitude",
+    "reflection": "Reflection",
+    "farewell": "Farewell",
+    "hope": "Hope",
+    "other": "Other",
+    "aiHelper": "AI Helper",
+    "aiSuggestions": "Writing Suggestions",
+    "getHelp": "Get help with phrasing",
+    "createMessage": "Create Message",
+    "recording": "Recording...",
+    "stopRecording": "Stop Recording",
+    "uploadMedia": "Upload Media",
+    "addRecipient": "Add Recipient"
+  },
+
+  "events": {
+    "title": "Emotional Calendar",
+    "subtitle": "Special dates and memories",
+    "addEvent": "Add Event",
+    "eventKind": "Event Type",
+    "birthday": "Birthday",
+    "anniversary": "Anniversary",
+    "memorial_person": "Memorial (Person)",
+    "memorial_pet": "Memorial (Pet)",
+    "personal_milestone": "Personal Milestone",
+    "eventTitle": "Title",
+    "eventDate": "Date",
+    "recurring": "Recurring Annually",
+    "emotionTag": "Emotion Tag",
+    "happy": "Happy",
+    "calm": "Calm",
+    "memory": "Memory",
+    "longing": "Longing",
+    "description": "Description",
+    "saveEvent": "Save Event",
+    "deleteEvent": "Delete Event",
+    "editEvent": "Edit Event",
+    "upcomingIn": "Upcoming in",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_plural": "{{count}} days ago"
+  },
+
+  "timeline": {
+    "title": "Timeline",
+    "filterByType": "Filter by Type",
+    "filterByEmotion": "Filter by Emotion",
+    "all": "All",
+    "messages": "Messages",
+    "events": "Events",
+    "capsules": "Capsules",
+    "past": "Past",
+    "future": "Future",
+    "today": "Today"
+  },
+
+  "capsule": {
+    "title": "Group Capsule",
+    "create": "Create Capsule",
+    "participants": "Participants",
+    "addParticipant": "Add Participant",
+    "openDate": "Open Date",
+    "opened": "Opened",
+    "notOpened": "Not yet opened",
+    "openedBy": "Opened by",
+    "waitingFor": "Waiting for"
+  },
+
+  "notification": {
+    "messageOpen": "🕰️ You have a whisper from your past",
+    "messageOpenBody": "The message '{{title}}' is ready to open",
+    "eventUpcoming": "Tomorrow is the anniversary of {{title}}",
+    "eventUpcomingBody": "Would you like to write a few words?",
+    "capsuleOpen": "The capsule '{{title}}' opens today",
+    "capsuleOpenBody": "See you inside",
+    "insightReady": "Your monthly insights are ready",
+    "insightReadyBody": "Discover what you learned this month"
+  },
+
+  "insights": {
+    "title": "AI Insights",
+    "monthly": "Monthly Insights",
+    "weekly": "Weekly Insights",
+    "emotionBreakdown": "Emotion Breakdown",
+    "topThemes": "Top Themes",
+    "messageCount": "Messages Written",
+    "viewInsights": "View Insights"
+  },
+
+  "subscription": {
+    "free": "Free",
+    "pro": "Pro",
+    "family": "Family",
+    "therapist": "Therapist",
+    "upgrade": "Upgrade",
+    "currentPlan": "Current Plan",
+    "features": {
+      "textMessages": "Text Messages",
+      "audioVideo": "Audio & Video",
+      "noAds": "No Ads",
+      "unlimitedCapsules": "Unlimited Capsules",
+      "therapistDashboard": "Therapist Dashboard"
+    },
+    "upgradeRequired": "Upgrade Required",
+    "upgradeMessage": "This feature is only available for {{tier}} subscribers"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "appearance": "Appearance",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "language": "Language",
+    "timezone": "Timezone",
+    "darkMode": "Dark Mode",
+    "auto": "Auto",
+    "light": "Light",
+    "dark": "Dark",
+    "aiInsights": "AI Insights",
+    "exportData": "Export Data",
+    "deleteAccount": "Delete Account"
+  },
+
+  "errors": {
+    "generic": "Something went wrong",
+    "networkError": "Network error - please try again",
+    "unauthorized": "You are not authorized",
+    "notFound": "Not found",
+    "encryptionFailed": "Encryption failed",
+    "decryptionFailed": "Decryption failed",
+    "uploadFailed": "Upload failed",
+    "invalidDate": "Invalid date",
+    "requiredField": "Required field"
+  },
+
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "open": "Open",
+    "loading": "Loading...",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "back": "Back"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "whispr",
+  "version": "1.0.0",
+  "description": "Whispr - Messages to your future self. Time-capsule messaging with emotional calendar.",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:45684/git/netanelavra-web/NYA4664"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@react-three/drei": "^10.7.6",
+    "@react-three/fiber": "^9.4.0",
+    "@types/node": "^24.9.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/three": "^0.180.0",
+    "autoprefixer": "^10.4.21",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "firebase": "^12.4.0",
+    "firebase-admin": "^13.5.0",
+    "framer-motion": "^12.23.24",
+    "i18next": "^25.6.0",
+    "next": "^15.5.6",
+    "next-i18next": "^15.4.2",
+    "openai": "^6.6.0",
+    "postcss": "^8.5.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-i18next": "^16.1.3",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.15",
+    "three": "^0.180.0",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.19",
+    "tailwindcss-rtl": "^0.9.0"
+  }
+}
