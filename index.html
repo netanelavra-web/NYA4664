@@ -138,6 +138,7 @@
   .cta:hover { box-shadow: var(--shadow-action-hover); transform: translate(-1px, -2px); background: #232839; }
   .cta:active { box-shadow: calc(var(--sx) * 2px) calc(var(--sy) * 2px) 6px -3px rgb(38 44 70 / 0.45); transform: none; }
   .hint { font-size: var(--fs-sm); color: var(--graphite); }
+  a.cta { text-decoration: none; }
 
   .colophon { grid-area: colophon; align-self: end; display: grid; gap: clamp(18px, 4vh, 40px); max-inline-size: 30rem; }
   .file { display: grid; gap: 0.25em; }
@@ -180,12 +181,6 @@
     .group, .group:last-child { padding-block: 6px 0; }
   }
 
-  /* ── משוב על המסך: שומר מקום כדי שלא תהיה קפיצה ── */
-  .feedback { min-block-size: 1.5em; font-size: var(--fs-sm); font-weight: 600; }
-  .feedback[data-tone="error"] { color: var(--rust); }
-  .feedback[data-tone="success"] { color: var(--leaf); }
-  .demo-note { font-size: 12px; color: var(--graphite); }
-
   @media (prefers-reduced-motion: reduce) {
     .cta { transition: none; }
     .cta:hover { transform: none; }
@@ -223,13 +218,11 @@
   </div>
 
   <div class="action">
-    <button class="cta" type="button" data-download aria-describedby="cta-hint">
+    <a class="cta" data-download href="#" aria-describedby="cta-hint">
       <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-download"/></svg>
       <span>הורדת ZIP מלא</span>
-    </button>
-    <p class="hint" id="cta-hint">נדרש קוד גישה להמשך</p>
-    <p class="feedback" data-feedback role="status" aria-live="polite"></p>
-    <p class="demo-note">ממשק הדגמה — אימות מקומי</p>
+    </a>
+    <p class="hint" id="cta-hint">נדרשת התחברות עם חשבון Google מורשה</p>
   </div>
 </main>
 
@@ -243,11 +236,9 @@
 const CONFIG = Object.freeze({
   gameName: "ShadowDance",
   version: "1.0",
-  downloadUrl: "game.zip", // באותה תיקייה של index.html (Nginx: /usr/share/nginx/html)
+  // הקובץ מוגש מ-Cloud Storage פרטי; ההרשאה נבדקת אצל Google לפי חשבון המשתמש המחובר.
+  downloadUrl: "https://storage.cloud.google.com/game-share-files-0192033851/game.zip",
   fileName: "game.zip",
-  // קוד גישה להדגמה. הבדיקה מתבצעת בדפדפן ולכן היא מחסום ממשקי בלבד, לא הגנה:
-  // הגנה אמיתית מחייבת אימות והרשאה בצד השרת (הקובץ עצמו נגיש לכל מי שיודע את הנתיב).
-  password: "אדמינתי",
   // מערכת הפעלה: לא ידועה, ולכן אינה מוצגת.
   os: null,
   // הערכה בלבד: סכום עמודת Packed ברשימת הארכיון, לא גודל קובץ ה-ZIP שנמדד.
@@ -261,13 +252,11 @@ const CONFIG = Object.freeze({
     { title: "תיעוד ובדיקות", items: ["docs/", "tests/", "README.md"] },
     { title: "הפעלה מקומית", items: ["index.html", "start.bat", "start.sh", "serve.py"] },
   ],
-  // רקע חי ואפקט חגיגה. false: פריים סטטי וללא חגיגה (המשוב הטקסטואלי נשמר).
+  // רקע חי. false: פריים סטטי.
   effects: true,
-  // צלילי משוב סינתטיים (Web Audio), רק בעקבות פעולת משתמש.
-  sounds: true,
 });
 
-/* ── מצבים, הודעות ותזמונים ───────────────────────────────────── */
+/* ── תזמונים ───────────────────────────────────── */
 const TIMING = Object.freeze({
   resizeDebounce: 150,
 });
@@ -290,19 +279,6 @@ function debounce(fn, ms) {
     timer = setTimeout(() => fn(...args), ms);
   };
 }
-
-function wait(ms, signal) {
-  return new Promise((resolve, reject) => {
-    if (signal.aborted) return reject(signal.reason);
-    const timer = setTimeout(resolve, ms);
-    signal.addEventListener("abort", () => {
-      clearTimeout(timer);
-      reject(signal.reason);
-    }, { once: true });
-  });
-}
-
-const isAbort = (error) => error && error.name === "AbortError";
 
 /* ── העדפות משתמש ─────────────────────────────────────────────── */
 // הערה: ב-Windows, כשהאפשרות "הצג אנימציות" כבויה, הדפדפן מדווח prefers-reduced-motion: reduce.
@@ -385,59 +361,6 @@ const Fit = {
     }
   },
 };
-
-/* ── אודיו: צלילים סינתטיים, רק אחרי פעולת משתמש. כשל אינו עוצר דבר ── */
-const Sound = (() => {
-  let ctx = null;
-
-  function prime() {
-    if (!CONFIG.sounds) return;
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      ctx = ctx || new AudioCtx();
-      if (ctx.state === "suspended") ctx.resume().catch(() => {});
-    } catch {
-      ctx = null;
-    }
-  }
-
-  function tone({ freq, to = freq, start = 0, dur, type = "sine", gain }) {
-    const t0 = ctx.currentTime + start;
-    const osc = ctx.createOscillator();
-    const amp = ctx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, t0);
-    osc.frequency.exponentialRampToValueAtTime(to, t0 + dur);
-    amp.gain.setValueAtTime(0.0001, t0);
-    amp.gain.exponentialRampToValueAtTime(gain, t0 + 0.012);
-    amp.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    osc.connect(amp).connect(ctx.destination);
-    osc.start(t0);
-    osc.stop(t0 + dur + 0.03);
-  }
-
-  function play(notes) {
-    if (!CONFIG.sounds || !ctx || ctx.state === "closed") return;
-    try {
-      notes.forEach(tone);
-    } catch {
-      /* כשל באודיו אינו פוגע בתהליך */
-    }
-  }
-
-  return {
-    prime,
-    error: () => play([
-      { freq: 233, to: 175, dur: 0.15, type: "triangle", gain: 0.09 },
-      { freq: 196, to: 147, start: 0.12, dur: 0.22, type: "triangle", gain: 0.08 },
-    ]),
-    success: () => play([
-      { freq: 587.33, dur: 0.24, gain: 0.045 },
-      { freq: 880, start: 0.1, dur: 0.38, gain: 0.04 },
-    ]),
-  };
-})();
 
 /* ── רקע: לולאת אנימציה משותפת. הסצנה עצמה מוגדרת בכל וריאציה ── */
 const Backdrop = {
@@ -522,60 +445,13 @@ const Backdrop = {
     this.scene.still();
   },
 
-  celebrate() {
-    if (Prefs.animate) this.scene.celebrate();
-  },
 };
-
-/* ── הורדה עם קוד גישה (prompt) ───────────────────────────────── */
-const MESSAGES = Object.freeze({
-  empty: "יש להזין קוד גישה.",
-  invalid: "קוד הגישה אינו נכון. ההורדה לא התחילה.",
-  initiated: "בקשת ההורדה נשלחה לדפדפן.",
-});
-
-function startDownload() {
-  const link = el("a", { href: CONFIG.downloadUrl, download: CONFIG.fileName, hidden: "" });
-  document.body.append(link);
-  link.click();
-  link.remove();
-}
-
-const Feedback = {
-  node: null,
-  show(tone, text) {
-    const node = this.node || (this.node = $("[data-feedback]"));
-    node.dataset.tone = tone;
-    node.textContent = text;
-  },
-};
-
-function requestDownload() {
-  Sound.prime();
-  // prompt חוסם את הדף עד לתשובה. null = המשתמש ביטל, ואז לא מציגים שגיאה.
-  const answer = window.prompt("הזן קוד גישה להורדת המשחק:");
-  if (answer === null) return;
-  const value = answer.trim();
-  if (!value) {
-    Feedback.show("error", MESSAGES.empty);
-    Sound.error();
-    return;
-  }
-  if (value !== CONFIG.password) {
-    Feedback.show("error", MESSAGES.invalid);
-    Sound.error();
-    return;
-  }
-  startDownload();
-  Feedback.show("success", MESSAGES.initiated);
-  Sound.success();
-  Backdrop.celebrate();
-}
 
 /* ── אתחול ───────────────────────────────────────────────────── */
 function boot(scene) {
   Content.render();
-  $("[data-download]").addEventListener("click", requestDownload);
+  // קישור רגיל: משתמש לא מחובר מועבר להתחברות Google, מורשה מקבל הורדה ישירה.
+  $("[data-download]").href = CONFIG.downloadUrl;
   Fit.apply();
   Backdrop.init(scene);
   // גופנים נטענים באיחור (או נכשלים): מודדים מחדש. כשל טעינה אינו שובר דבר, נשארים עם ה-fallback.
@@ -693,24 +569,13 @@ const LeafScene = {
     return a < 0 ? 0 : Math.pow(Math.sin(Math.PI * a / 4), 2);
   },
 
-  /* חגיגה: צללים של עלים נושרים חוצים את הקיר */
-  celebrate() {
-    const { width: W, height: H } = this.bd;
-    const unit = Math.max(W, H);
-    this.falling = Array.from({ length: Prefs.compact ? 9 : 15 }, (_, i) => ({
-      x: W * (0.05 + 0.9 * this.rand()), y: -H * (0.05 + 0.35 * this.rand()) - i * 6,
-      vy: H * (0.22 + 0.12 * this.rand()), drift: unit * (0.02 + 0.03 * this.rand()),
-      size: unit * (0.012 + 0.008 * this.rand()), f: 1.2 + this.rand() * 1.6, p: this.rand() * TAU, age: 0,
-    }));
-  },
-
   updateFalling(dt) {
     if (!this.falling.length) return;
     for (const leaf of this.falling) { leaf.age += dt; leaf.y += leaf.vy * dt; }
     this.falling = this.falling.filter((leaf) => leaf.y < this.bd.height * 1.1 && leaf.age < 7);
   },
 
-  /* הצל של ה-CTA והמודאל נגזר ממיקום השמש */
+  /* הצל של ה-CTA נגזר ממיקום השמש */
   updateUiShadows(px, py) {
     const sx = (1 + px * 0.25).toFixed(2), sy = (1.4 + py * 0.25).toFixed(2);
     const key = sx + sy;
