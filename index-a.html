@@ -1,0 +1,1240 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#09080E">
+<title>ShadowDance — הורדה</title>
+<!-- IBM Plex Sans Hebrew: עברית ולטינית מאותו שרטוט, רוח של מכשור ותצפית. Plex Mono לשמות קבצים. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@200;300;400;600&display=swap">
+<style>
+  :root {
+    /* פלטה — ליקוי מלא */
+    --void: #09080E;
+    --umbra: #000000;
+    --corona: #EEEAF5;
+    --penumbra: #A7A0BA;
+    --halpha: #FF6F8E;
+    --panel: #110F17;
+    --field: #08070C;
+    --line: rgb(238 234 245 / 0.14);
+    --line-strong: rgb(238 234 245 / 0.34);
+
+    --font-sans: "IBM Plex Sans Hebrew", "Segoe UI", "Arial Hebrew", Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, "DejaVu Sans Mono", monospace;
+
+    --vh: 1vh;
+    --pad: clamp(16px, 3.4vmin, 52px);
+    --fs-xs: clamp(11.5px, 1.25vmin, 13px);
+    --fs-sm: clamp(12.5px, 1.45vmin, 14.5px);
+    --fs-md: clamp(14px, 1.75vmin, 17px);
+
+    /* רדיוסים מדורגים לפי חשיבות: הפעולה עגולה כמו הדיסקה, המודאל רך, השדה חד יותר */
+    --radius-action: 999px;
+    --radius-panel: 18px;
+    --radius-field: 10px;
+    --shadow-panel: 0 30px 90px rgb(0 0 0 / 0.65);
+
+    --spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+  @supports (height: 100dvh) { :root { --vh: 1dvh; } }
+  @supports (animation-timing-function: linear(0, 1)) {
+    :root { --spring: linear(0, 0.18 4%, 0.55 10%, 0.86 17%, 1.02 24%, 1.05 30%, 1.03 38%, 1 50%, 0.995 62%, 1); }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-block-size: 100vh;
+    min-block-size: 100dvh;
+    background: var(--void);
+    color: var(--corona);
+    font-family: var(--font-sans);
+    font-size: var(--fs-md);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, p, ul, dl, dd { margin: 0; padding: 0; }
+  ul { list-style: none; }
+  button, input { font: inherit; color: inherit; }
+  .sr-only {
+    position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  .icon { inline-size: 1.25em; block-size: 1.25em; flex: none; }
+  :focus-visible { outline: 2px solid var(--corona); outline-offset: 3px; }
+
+  /* ── רקע ── */
+  .backdrop {
+    position: fixed; inset: 0; inline-size: 100%; block-size: 100%;
+    display: block; pointer-events: none; z-index: 0;
+  }
+
+  /* ── פריסה: דסקטופ — שלושה טורים סביב הליקוי ── */
+  .page {
+    position: relative; z-index: 1;
+    min-block-size: calc(var(--vh) * 100);
+    padding: var(--pad);
+    display: grid;
+    --disc: min(calc(var(--vh) * 64), 42vw);
+    --gap: calc(var(--disc) * 0.15);
+    grid-template-columns: minmax(0, 1fr) var(--disc) minmax(0, 1fr);
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-areas:
+      ".      eclipse contents"
+      "status eclipse contents"
+      "file   eclipse contents"
+      ".      eclipse contents";
+    column-gap: var(--gap);
+    align-items: center;
+  }
+
+  .eclipse { grid-area: eclipse; display: grid; place-items: center; }
+  .umbra {
+    inline-size: var(--disc);
+    block-size: var(--disc);
+    border-radius: 50%;
+    background: var(--umbra);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: calc(var(--disc) * 0.12);
+    gap: calc(var(--disc) * 0.03);
+  }
+  .title {
+    inline-size: 100%;
+    font-weight: 200;
+    font-size: calc(var(--disc) * 0.118 * var(--fit, 1));
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--corona);
+  }
+  .title__text { display: inline-block; white-space: nowrap; }
+  .lede {
+    font-weight: 300;
+    font-size: clamp(14px, calc(var(--disc) * 0.034), 19px);
+    color: var(--penumbra);
+    max-inline-size: 22em;
+    text-wrap: balance;
+  }
+  .action { display: grid; justify-items: center; gap: 0.7em; margin-block-start: calc(var(--disc) * 0.035); }
+  .cta {
+    display: inline-flex; align-items: center; gap: 0.6em;
+    min-block-size: clamp(46px, calc(var(--disc) * 0.12), 58px);
+    padding-inline: clamp(22px, calc(var(--disc) * 0.07), 34px);
+    border: 0;
+    border-radius: var(--radius-action);
+    background: var(--corona);
+    color: var(--void);
+    font-weight: 600;
+    font-size: clamp(15px, calc(var(--disc) * 0.028), 17px);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  .cta:hover { background: #FFFFFF; transform: translateY(-1px); }
+  .cta:active { transform: translateY(0) scale(0.98); }
+  .hint { font-size: var(--fs-sm); color: var(--penumbra); }
+
+  .status {
+    grid-area: status;
+    justify-self: end;
+    display: inline-flex; align-items: center; gap: 0.6em;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    color: var(--corona);
+    margin-block-end: 1.4em;
+  }
+  .status__mark { inline-size: 14px; block-size: 14px; flex: none; }
+
+  .file { grid-area: file; justify-self: end; text-align: end; display: grid; gap: 0.35em; }
+  .file__name { font-family: var(--font-mono); font-size: var(--fs-md); color: var(--corona); overflow-wrap: anywhere; }
+  .meta { display: flex; flex-wrap: wrap; justify-content: flex-end; font-size: var(--fs-sm); color: var(--penumbra); }
+  .meta__item { display: flex; gap: 0.35em; }
+  .meta__item + .meta__item::before { content: "·"; margin-inline: 0.55em; color: var(--penumbra); }
+  .meta__item[data-key="format"] .meta__label,
+  .meta__item[data-key="size"] .meta__label { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+
+  .contents { grid-area: contents; justify-self: start; display: grid; gap: 1.1em; max-inline-size: 22rem; }
+  .contents__title { font-size: var(--fs-xs); font-weight: 400; color: var(--penumbra); letter-spacing: 0.02em; }
+  .groups { display: grid; gap: clamp(10px, 2.2vmin, 22px); }
+  .group__title { font-size: var(--fs-md); font-weight: 600; color: var(--corona); line-height: 1.35; }
+  .group__items {
+    display: flex; flex-wrap: wrap; gap: 0.1em 1.1em;
+    margin-block-start: 0.2em;
+    font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--penumbra);
+  }
+  .group__slash { opacity: 0.6; }
+
+  /* ── פריסה: מובייל ופורטרט — ליקוי במרכז, מידע מתחתיו ── */
+  @media (orientation: portrait), (max-width: 639.98px) {
+    .page {
+      --disc: min(80vw, calc(var(--vh) * 44), 560px);
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto auto auto;
+      grid-template-areas: "status" "eclipse" "file" "contents";
+      align-content: center;
+      row-gap: clamp(12px, 2.6vmin, 28px);
+    }
+    .status { justify-self: center; margin-block-end: 0; }
+    .file { justify-self: center; text-align: center; margin-block-start: calc(var(--disc) * 0.06); }
+    .meta { justify-content: center; }
+    .contents { justify-self: stretch; max-inline-size: 34rem; margin-inline: auto; inline-size: 100%; }
+    .contents__title { text-align: center; }
+    .groups { grid-template-columns: 1fr 1fr; column-gap: 1.25em; }
+    .umbra { padding: calc(var(--disc) * 0.1); }
+    .title { font-size: calc(var(--disc) * 0.122 * var(--fit, 1)); }
+  }
+  /* מסך נמוך: מצמצמים ריווח, לא טקסט */
+  @media (max-height: 680px) and (orientation: portrait) {
+    .page { row-gap: 10px; --disc: min(78vw, calc(var(--vh) * 42)); }
+    .file { margin-block-start: 6px; }
+    .groups { row-gap: 8px; }
+  }
+
+  /* ── מודאל ── */
+  .dialog {
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    background: var(--panel);
+    color: var(--corona);
+    inline-size: min(27rem, calc(100vw - 32px));
+    max-block-size: calc(var(--vh) * 100 - 32px);
+    overflow-y: auto;
+    box-shadow: var(--shadow-panel);
+  }
+  .dialog::backdrop { background: rgb(4 3 8 / 0.66); }
+  .dialog[open] { animation: dialog-in 0.6s var(--spring) both; }
+  .dialog[open]::backdrop { animation: fade-in 0.3s ease-out both; }
+  @keyframes dialog-in { from { opacity: 0; transform: translateY(16px) scale(0.96); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .dialog__panel { display: grid; gap: 14px; padding: clamp(20px, 4.2vmin, 30px); }
+  .dialog__head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
+  .dialog__title { font-size: clamp(19px, 2.4vmin, 22px); font-weight: 600; }
+  .dialog__desc { color: var(--penumbra); font-size: var(--fs-sm); }
+  .dialog__close {
+    inline-size: 40px; block-size: 40px; display: grid; place-items: center;
+    border: 0; border-radius: var(--radius-action); background: transparent; color: var(--penumbra);
+    cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .dialog__close:hover { background: rgb(238 234 245 / 0.08); color: var(--corona); }
+
+  /* ליקוי זעיר: מחוון שלב. חלקי → מלא → טבעת יהלום */
+  .mini { inline-size: 40px; block-size: 40px; overflow: visible; }
+  .mini__sun { fill: var(--corona); transition: fill 0.3s ease; }
+  .mini__moon { fill: var(--panel); transform: translate(-11px, 3px); transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .mini__corona { fill: none; stroke: var(--corona); stroke-width: 1; opacity: 0; transition: opacity 0.5s ease; }
+  .mini__bead { fill: #FFFFFF; opacity: 0; transition: opacity 0.3s ease; }
+  .dialog[data-state="validating"] .mini__moon { transform: translate(-6px, 1.5px); }
+  .dialog[data-state="initiating"] .mini__moon { transform: translate(-2.5px, 0.6px); }
+  .dialog[data-state="initiated"] .mini__moon { transform: none; }
+  .dialog[data-state="initiated"] .mini__corona { opacity: 0.4; }
+  .dialog[data-state="initiated"] .mini__bead { opacity: 1; }
+  .dialog[data-state="invalid-password"] .mini__sun,
+  .dialog[data-state="error"] .mini__sun { fill: var(--halpha); }
+
+  .field-label { font-size: var(--fs-sm); font-weight: 600; margin-block-end: -6px; }
+  .field { position: relative; }
+  .field__input {
+    inline-size: 100%;
+    min-block-size: 50px;
+    padding-block: 10px;
+    padding-inline: 16px 52px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-field);
+    background: var(--field);
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    transition: border-color 0.2s ease;
+  }
+  .field__input:focus-visible { outline: 2px solid var(--corona); outline-offset: 2px; border-color: var(--corona); }
+  .field__input[aria-invalid="true"] { border-color: var(--halpha); }
+  .field__input[readonly] { color: var(--penumbra); }
+  .field__reveal {
+    position: absolute; inset-block: 5px; inset-inline-end: 5px;
+    inline-size: 42px; display: grid; place-items: center;
+    border: 0; border-radius: 7px; background: transparent; color: var(--penumbra); cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .field__reveal:hover { background: rgb(238 234 245 / 0.08); color: var(--corona); }
+  .field__reveal .icon-hide { display: none; }
+  .field__reveal[aria-pressed="true"] .icon-show { display: none; }
+  .field__reveal[aria-pressed="true"] .icon-hide { display: block; }
+  .field.is-shaking { animation: shake 0.38s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-7px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(2px); }
+  }
+
+  .dialog__status { min-block-size: calc(2 * 1.5em + 6px); font-size: var(--fs-sm); display: grid; align-content: start; gap: 4px; }
+  .msg { display: flex; align-items: flex-start; gap: 8px; }
+  .msg__icon:empty { display: none; }
+  .msg__icon .icon { inline-size: 18px; block-size: 18px; margin-block-start: 1px; }
+  .msg[data-tone="error"] { color: var(--halpha); }
+  .msg[data-tone="success"] { color: var(--corona); }
+  .msg[data-tone="progress"] { color: var(--penumbra); }
+  .icon--progress { animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fallback { color: var(--corona); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); padding-inline-start: 26px; justify-self: start; }
+  .fallback:hover { text-decoration-color: var(--corona); }
+
+  .dialog__submit {
+    min-block-size: 50px; border: 0; border-radius: var(--radius-action);
+    background: var(--corona); color: var(--void); font-weight: 600; cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+  }
+  .dialog__submit:hover { background: #FFFFFF; }
+  .dialog__submit[aria-disabled="true"] { opacity: 0.55; cursor: default; }
+  .dialog__submit[aria-disabled="true"]:hover { background: var(--corona); }
+  .demo-note { font-size: 11.5px; color: var(--penumbra); text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dialog[open] { animation: fade-in 0.16s ease-out both; }
+    .dialog[open]::backdrop { animation: none; }
+    .icon--progress, .field.is-shaking { animation: none; }
+    .cta, .mini__moon, .mini__corona, .mini__bead, .mini__sun { transition: none; }
+    .cta:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<canvas class="backdrop" data-backdrop aria-hidden="true"></canvas>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 3.5l17 17"/><path d="M10.6 5.6A9.7 9.7 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3.2 3.9M6.4 6.9A16.6 16.6 0 0 0 2.5 12S6 18.5 12 18.5a9.4 9.4 0 0 0 4.4-1.1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.4v.2"/></symbol>
+  <symbol id="i-progress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5" opacity="0.25"/><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.2"/></symbol>
+</svg>
+
+<main class="page">
+  <div class="eclipse">
+    <div class="umbra" data-umbra>
+      <h1 class="title"><span class="title__text" lang="en" dir="ltr" data-slot="game-name" data-fit></span></h1>
+      <p class="lede">חבילת המשחק המלאה, במקום אחד.</p>
+      <div class="action">
+        <button class="cta" type="button" data-open-dialog aria-haspopup="dialog" aria-describedby="cta-hint">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-download"/></svg>
+          <span>הורדת ZIP מלא</span>
+        </button>
+        <p class="hint" id="cta-hint">נדרש קוד גישה להמשך</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="status">
+    <!-- טבעת סגורה סביב דיסקה: ליקוי מלא = מוכן -->
+    <svg class="status__mark" viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+      <circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.2"/>
+      <circle cx="7" cy="7" r="3.2" fill="currentColor"/>
+    </svg>
+    <span lang="en" dir="ltr" data-slot="status"></span>
+  </p>
+
+  <section class="file" aria-labelledby="file-heading">
+    <h2 class="sr-only" id="file-heading">פרטי הקובץ</h2>
+    <p class="file__name"><bdi dir="ltr" data-slot="file-name"></bdi></p>
+    <dl class="meta" data-slot="meta"></dl>
+  </section>
+
+  <section class="contents" aria-labelledby="contents-heading">
+    <h2 class="contents__title" id="contents-heading">תכולה בסיסית</h2>
+    <ul class="groups" data-slot="contents"></ul>
+  </section>
+</main>
+
+<dialog class="dialog" data-dialog aria-labelledby="dialog-title" aria-describedby="dialog-desc" data-state="idle">
+  <form class="dialog__panel" data-dialog-form novalidate>
+    <div class="dialog__head">
+      <svg class="mini" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+        <circle class="mini__corona" cx="24" cy="24" r="19"/>
+        <circle class="mini__sun" cx="24" cy="24" r="13"/>
+        <circle class="mini__moon" cx="24" cy="24" r="13.6"/>
+        <circle class="mini__bead" cx="32.2" cy="13.6" r="2.4"/>
+      </svg>
+      <h2 class="dialog__title" id="dialog-title">אימות גישה</h2>
+      <button class="dialog__close" type="button" data-dialog-close aria-label="סגירה">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <p class="dialog__desc" id="dialog-desc">ההורדה תתחיל לאחר הזנת קוד הגישה.</p>
+
+    <label class="field-label" for="access-code">קוד גישה</label>
+    <div class="field" data-field>
+      <input class="field__input" id="access-code" name="access-code" type="password" data-access-input
+             autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" dir="auto"
+             aria-describedby="dialog-status">
+      <button class="field__reveal" type="button" data-reveal aria-controls="access-code" aria-pressed="false" aria-label="הצגת קוד הגישה">
+        <svg class="icon icon-show" aria-hidden="true" focusable="false"><use href="#i-eye"/></svg>
+        <svg class="icon icon-hide" aria-hidden="true" focusable="false"><use href="#i-eye-off"/></svg>
+      </button>
+    </div>
+
+    <div class="dialog__status" id="dialog-status" role="status" aria-live="polite" aria-atomic="true">
+      <p class="msg" data-message data-tone="neutral"><span class="msg__icon" data-message-icon aria-hidden="true"></span><span data-message-text></span></p>
+      <a class="fallback" data-fallback hidden>ההורדה לא התחילה? לחץ כאן</a>
+    </div>
+
+    <button class="dialog__submit" type="submit" data-submit>אימות והורדה</button>
+    <p class="demo-note">ממשק הדגמה — אימות מקומי</p>
+  </form>
+</dialog>
+
+<script>
+"use strict";
+
+/* ════════════════════════════════════════════════════════════════
+   CONFIG — מקור האמת היחיד לנתוני הדף. זהה בשלוש הווריאציות.
+   ערך null אינו מוצג. אין להמציא כאן נתונים שאינם ידועים.
+   ════════════════════════════════════════════════════════════════ */
+const CONFIG = Object.freeze({
+  gameName: "ShadowDance",
+  version: "1.0",
+  downloadUrl: "./ShadowDance-Full-NYA.zip",
+  fileName: "ShadowDance-Full-NYA.zip",
+  // קוד גישה להדגמה. הבדיקה מתבצעת בדפדפן ולכן היא מחסום ממשקי בלבד, לא הגנה:
+  // הגנה אמיתית מחייבת אימות והרשאה בצד השרת (הקובץ עצמו נגיש לכל מי שיודע את הנתיב).
+  password: "אדמינתי",
+  // מערכת הפעלה: לא ידועה, ולכן אינה מוצגת.
+  os: null,
+  // הערכה בלבד: סכום עמודת Packed ברשימת הארכיון, לא גודל קובץ ה-ZIP שנמדד.
+  fileSize: "כ-140 MB",
+  // SHA256SUMS.txt שבתוך הארכיון מתייחס לקבצים שבו ולא ל-ZIP עצמו, ולכן אין כאן ערך.
+  sha256: null,
+  // תכולה בסיסית לפי מבנה הארכיון. "/" בסוף שם מסמן תיקייה.
+  contents: [
+    { title: "קוד המשחק וגרסה בנויה", items: ["src/", "dist/", "scripts/"] },
+    { title: "נכסים וקבצי עיצוב", items: ["assets/", "design/"] },
+    { title: "תיעוד ובדיקות", items: ["docs/", "tests/", "README.md"] },
+    { title: "הפעלה מקומית", items: ["index.html", "start.bat", "start.sh", "serve.py"] },
+  ],
+  // רקע חי ואפקט חגיגה. false: פריים סטטי וללא חגיגה (המשוב הטקסטואלי נשמר).
+  effects: true,
+  // צלילי משוב סינתטיים (Web Audio), רק בעקבות פעולת משתמש.
+  sounds: true,
+});
+
+/* ── מצבים, הודעות ותזמונים ───────────────────────────────────── */
+const STATES = Object.freeze({
+  IDLE: "idle",
+  VALIDATING: "validating",
+  INVALID: "invalid-password",
+  INITIATING: "initiating",
+  INITIATED: "initiated",
+  ERROR: "error",
+});
+
+const TONES = Object.freeze({
+  [STATES.IDLE]: "neutral",
+  [STATES.VALIDATING]: "progress",
+  [STATES.INVALID]: "error",
+  [STATES.INITIATING]: "progress",
+  [STATES.INITIATED]: "success",
+  [STATES.ERROR]: "error",
+});
+
+const MESSAGES = Object.freeze({
+  empty: "יש להזין קוד גישה.",
+  invalid: "קוד הגישה אינו נכון. נסה שוב.",
+  validating: "בודק קוד גישה…",
+  initiating: "מכין הורדה…",
+  initiated: "בקשת ההורדה נשלחה לדפדפן.",
+  notFound: "קובץ ההורדה לא נמצא בשרת (404).",
+  network: "לא ניתן להתחבר לשרת. בדוק את החיבור ונסה שוב.",
+  timeout: "השרת לא הגיב בזמן. נסה שוב.",
+  unexpected: "אירעה שגיאה בלתי צפויה. נסה שוב.",
+  server: (status) => `השרת החזיר שגיאה (${status}). ההורדה לא התחילה.`,
+});
+
+const TIMING = Object.freeze({
+  validate: 280, // משוב קצר ל"בודק קוד גישה…", לא המתנה מלאכותית ארוכה
+  prepareMin: 320, // זמן תצוגה מינימלי ל"מכין הורדה…" כדי שלא יהבהב
+  headTimeout: 10000,
+  backdropGuard: 400, // לחיצה כפולה על הכפתור הפותח לא תסגור את המודאל מיד
+  resizeDebounce: 150,
+});
+
+/* ── עזרים ────────────────────────────────────────────────────── */
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+  node.append(...children);
+  return node;
+}
+
+function debounce(fn, ms) {
+  let timer = 0;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+}
+
+function wait(ms, signal) {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) return reject(signal.reason);
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener("abort", () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    }, { once: true });
+  });
+}
+
+const isAbort = (error) => error && error.name === "AbortError";
+
+/* ── העדפות משתמש ─────────────────────────────────────────────── */
+// הערה: ב-Windows, כשהאפשרות "הצג אנימציות" כבויה, הדפדפן מדווח prefers-reduced-motion: reduce.
+const Prefs = {
+  motion: matchMedia("(prefers-reduced-motion: reduce)"),
+  finePointer: matchMedia("(hover: hover) and (pointer: fine)"),
+  coarse: matchMedia("(pointer: coarse)"),
+  get reducedMotion() { return this.motion.matches; },
+  get animate() { return CONFIG.effects && !this.reducedMotion; },
+  get compact() { return innerWidth < 720 || this.coarse.matches; },
+};
+
+/* ── תוכן: מילוי הדף מתוך CONFIG ─────────────────────────────── */
+const Content = {
+  render() {
+    document.title = `${CONFIG.gameName} — הורדה`;
+    this.fill("game-name", CONFIG.gameName);
+    this.fill("status", `RELEASE READY // V${CONFIG.version}`);
+    this.fill("file-name", CONFIG.fileName);
+    this.renderMeta();
+    this.renderContents();
+    for (const link of $$("[data-fallback]")) {
+      link.href = CONFIG.downloadUrl;
+      link.download = CONFIG.fileName;
+    }
+  },
+
+  fill(slot, value) {
+    for (const node of $$(`[data-slot="${slot}"]`)) node.textContent = value;
+  },
+
+  metaItems() {
+    const ext = CONFIG.fileName.includes(".") ? CONFIG.fileName.split(".").pop().toUpperCase() : null;
+    return [
+      { key: "format", label: "פורמט", value: ext },
+      { key: "version", label: "גרסה", value: CONFIG.version },
+      { key: "size", label: "גודל", value: CONFIG.fileSize },
+      { key: "os", label: "מערכת הפעלה", value: CONFIG.os },
+      { key: "sha256", label: "SHA-256", value: CONFIG.sha256, ltr: true },
+    ].filter((item) => item.value !== null && item.value !== undefined && item.value !== "");
+  },
+
+  renderMeta() {
+    const items = this.metaItems();
+    for (const list of $$('[data-slot="meta"]')) {
+      list.replaceChildren(...items.map((item) => el("div", { class: "meta__item", "data-key": item.key },
+        el("dt", { class: "meta__label" }, item.label),
+        el("dd", { class: "meta__value" }, item.ltr ? el("bdi", { dir: "ltr" }, item.value) : item.value),
+      )));
+    }
+  },
+
+  renderContents() {
+    const list = $('[data-slot="contents"]');
+    if (!list) return;
+    list.replaceChildren(...CONFIG.contents.map((group) => el("li", { class: "group" },
+      el("h3", { class: "group__title" }, group.title),
+      el("ul", { class: "group__items" }, ...group.items.map((name) => el("li", { class: "group__item" }, this.itemName(name)))),
+    )));
+  },
+
+  itemName(name) {
+    const isDir = name.endsWith("/");
+    const label = el("bdi", { dir: "ltr" }, isDir ? name.slice(0, -1) : name);
+    if (isDir) label.append(el("span", { class: "group__slash", "aria-hidden": "true" }, "/"));
+    return label;
+  },
+};
+
+/* ── התאמת כותרת לרוחב ──────────────────────────────────────────
+   גודל הבסיס ב-CSS בטוח גם לגופן חלופי רחב, כך שאין גלישה לפני שהגופנים נטענים.
+   כאן הוא מוקטן אם אינו נכנס, או מוגדל עד הערך שב-data-fit (למשל "1.3"). */
+const Fit = {
+  apply() {
+    for (const node of $$("[data-fit]")) {
+      const box = node.parentElement;
+      box.style.removeProperty("--fit");
+      const style = getComputedStyle(box);
+      const available = box.clientWidth - parseFloat(style.paddingInlineStart) - parseFloat(style.paddingInlineEnd);
+      const needed = node.getBoundingClientRect().width;
+      if (!(needed > 0 && available > 0)) continue;
+      const fit = Math.min((available / needed) * 0.98, parseFloat(node.dataset.fit) || 1);
+      if (Math.abs(fit - 1) > 0.002) box.style.setProperty("--fit", fit.toFixed(4));
+    }
+  },
+};
+
+/* ── אודיו: צלילים סינתטיים, רק אחרי פעולת משתמש. כשל אינו עוצר דבר ── */
+const Sound = (() => {
+  let ctx = null;
+
+  function prime() {
+    if (!CONFIG.sounds) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      ctx = ctx || new AudioCtx();
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
+    } catch {
+      ctx = null;
+    }
+  }
+
+  function tone({ freq, to = freq, start = 0, dur, type = "sine", gain }) {
+    const t0 = ctx.currentTime + start;
+    const osc = ctx.createOscillator();
+    const amp = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    osc.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+    amp.gain.setValueAtTime(0.0001, t0);
+    amp.gain.exponentialRampToValueAtTime(gain, t0 + 0.012);
+    amp.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(amp).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.03);
+  }
+
+  function play(notes) {
+    if (!CONFIG.sounds || !ctx || ctx.state === "closed") return;
+    try {
+      notes.forEach(tone);
+    } catch {
+      /* כשל באודיו אינו פוגע בתהליך */
+    }
+  }
+
+  return {
+    prime,
+    error: () => play([
+      { freq: 233, to: 175, dur: 0.15, type: "triangle", gain: 0.09 },
+      { freq: 196, to: 147, start: 0.12, dur: 0.22, type: "triangle", gain: 0.08 },
+    ]),
+    success: () => play([
+      { freq: 587.33, dur: 0.24, gain: 0.045 },
+      { freq: 880, start: 0.1, dur: 0.38, gain: 0.04 },
+    ]),
+  };
+})();
+
+/* ── רקע: לולאת אנימציה משותפת. הסצנה עצמה מוגדרת בכל וריאציה ── */
+const Backdrop = {
+  scene: null,
+  canvas: null,
+  ctx: null,
+  raf: 0,
+  last: 0,
+  time: 0,
+  width: 0,
+  height: 0,
+  dpr: 1,
+  pointer: { x: 0, y: 0, tx: 0, ty: 0 },
+
+  init(scene) {
+    this.scene = scene;
+    this.canvas = $("[data-backdrop]");
+    this.ctx = this.canvas.getContext("2d");
+    this.tick = this.tick.bind(this);
+    this.measure();
+    scene.init(this);
+    window.addEventListener("resize", debounce(() => this.relayout(), TIMING.resizeDebounce));
+    // גלילה אפשרית רק בזום גבוה או עם מקלדת וירטואלית; הסצנה מתעדכנת למיקום התוכן.
+    window.addEventListener("scroll", () => {
+      this.scene.layout();
+      if (!this.raf) this.drawStatic();
+    }, { passive: true });
+    document.addEventListener("visibilitychange", () => this.sync());
+    Prefs.motion.addEventListener("change", () => this.sync());
+    // אינטראקציית עכבר: דסקטופ בלבד, עדינה.
+    if (Prefs.finePointer.matches) {
+      window.addEventListener("pointermove", (event) => {
+        this.pointer.tx = (event.clientX / this.width) * 2 - 1;
+        this.pointer.ty = (event.clientY / this.height) * 2 - 1;
+      }, { passive: true });
+    }
+    this.sync();
+  },
+
+  measure() {
+    // devicePixelRatio מוגבל ל-1.5 לטובת ביצועים.
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = Math.round(this.width * this.dpr);
+    this.canvas.height = Math.round(this.height * this.dpr);
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+  },
+
+  relayout() {
+    Fit.apply();
+    this.measure();
+    this.scene.resize(this);
+    if (!this.raf) this.drawStatic();
+  },
+
+  sync() {
+    const run = Prefs.animate && !document.hidden;
+    if (run && !this.raf) {
+      this.last = performance.now();
+      this.raf = requestAnimationFrame(this.tick);
+    } else if (!run) {
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+      if (!document.hidden) this.drawStatic();
+    }
+  },
+
+  tick(now) {
+    // תנועה מבוססת זמן; dt מוגבל ל-50ms כדי שקפיצה בפריים לא תזניק את הסצנה.
+    const dt = Math.min((now - this.last) / 1000, 0.05);
+    this.last = now;
+    this.time += dt;
+    const ease = 1 - Math.exp(-dt * 2.5);
+    this.pointer.x += (this.pointer.tx - this.pointer.x) * ease;
+    this.pointer.y += (this.pointer.ty - this.pointer.y) * ease;
+    this.scene.frame(dt, this.time);
+    this.raf = requestAnimationFrame(this.tick);
+  },
+
+  drawStatic() {
+    this.scene.still();
+  },
+
+  celebrate() {
+    if (Prefs.animate) this.scene.celebrate();
+  },
+};
+
+/* ── בדיקת קיום הקובץ לפני ההורדה ─────────────────────────────── */
+async function probeDownload(url, signal) {
+  const target = new URL(url, document.baseURI);
+  const sameOriginHttp = /^https?:$/.test(location.protocol) && target.origin === location.origin;
+  // ב-file:// או ממקור אחר אין בדיקה מקדימה (HEAD חסום שם), וההורדה מתחילה ישירות.
+  // ההתנהגות עשויה להשתנות בין דפדפנים: ממקור אחר המאפיין download לא תמיד מכובד, וייתכן ניווט לקובץ.
+  if (!sameOriginHttp) return { proceed: true };
+
+  const probe = new AbortController();
+  const relay = () => probe.abort();
+  signal.addEventListener("abort", relay, { once: true });
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; probe.abort(); }, TIMING.headTimeout);
+
+  try {
+    const response = await fetch(target, { method: "HEAD", cache: "no-store", signal: probe.signal });
+    if (response.ok) return { proceed: true };
+    if (response.status === 404) return { proceed: false, message: MESSAGES.notFound };
+    // 405/501: השרת אינו תומך ב-HEAD. ממשיכים, בלי לטעון שהקובץ נבדק.
+    if (response.status === 405 || response.status === 501) return { proceed: true };
+    return { proceed: false, message: MESSAGES.server(response.status) };
+  } catch (error) {
+    if (signal.aborted) throw signal.reason;
+    return { proceed: false, message: timedOut ? MESSAGES.timeout : MESSAGES.network };
+  } finally {
+    clearTimeout(timer);
+    signal.removeEventListener("abort", relay);
+  }
+}
+
+function startDownload() {
+  const link = el("a", { href: CONFIG.downloadUrl, download: CONFIG.fileName, hidden: "" });
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
+
+/* ── ממשק המודאל: הצגת מצב בלבד ─────────────────────────────── */
+const ui = {};
+
+const View = {
+  bind() {
+    Object.assign(ui, {
+      open: $("[data-open-dialog]"),
+      dialog: $("[data-dialog]"),
+      form: $("[data-dialog-form]"),
+      close: $("[data-dialog-close]"),
+      input: $("[data-access-input]"),
+      reveal: $("[data-reveal]"),
+      field: $("[data-field]"),
+      submit: $("[data-submit]"),
+      message: $("[data-message]"),
+      messageText: $("[data-message-text]"),
+      messageIcon: $("[data-message-icon]"),
+      fallback: $("[data-fallback]"),
+    });
+  },
+
+  render(state, text) {
+    const tone = TONES[state];
+    const busy = state === STATES.VALIDATING || state === STATES.INITIATING;
+    const locked = busy || state === STATES.INITIATED;
+    ui.dialog.dataset.state = state;
+    ui.message.dataset.tone = tone;
+    ui.messageText.textContent = text;
+    ui.messageIcon.replaceChildren(text ? this.icon(tone) : "");
+    ui.input.setAttribute("aria-invalid", String(state === STATES.INVALID));
+    ui.input.readOnly = locked;
+    ui.submit.setAttribute("aria-disabled", String(locked));
+    ui.form.setAttribute("aria-busy", String(busy));
+    ui.fallback.hidden = state !== STATES.INITIATED;
+  },
+
+  icon(tone) {
+    const ids = { neutral: "i-info", progress: "i-progress", error: "i-alert", success: "i-check" };
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", `#${ids[tone]}`);
+    svg.setAttribute("class", `icon icon--${tone}`);
+    svg.setAttribute("focusable", "false");
+    svg.append(use);
+    return svg;
+  },
+
+  setReveal(visible) {
+    ui.input.type = visible ? "text" : "password";
+    ui.reveal.setAttribute("aria-pressed", String(visible));
+    ui.reveal.setAttribute("aria-label", visible ? "הסתרת קוד הגישה" : "הצגת קוד הגישה");
+  },
+
+  shake() {
+    if (Prefs.reducedMotion) return;
+    ui.field.classList.remove("is-shaking");
+    void ui.field.offsetWidth; // מאפשר הפעלה חוזרת של האנימציה
+    ui.field.classList.add("is-shaking");
+  },
+};
+
+/* ── ניהול מצב ותהליך ההורדה ─────────────────────────────────── */
+const Flow = {
+  state: STATES.IDLE,
+  opId: 0,
+  controller: null,
+
+  set(state, text = "") {
+    this.state = state;
+    View.render(state, text);
+  },
+
+  get locked() {
+    return [STATES.VALIDATING, STATES.INITIATING, STATES.INITIATED].includes(this.state);
+  },
+
+  async submit() {
+    if (this.locked) return; // נעילת שליחה חוזרת
+    const value = ui.input.value.trim();
+    if (!value) {
+      this.set(STATES.INVALID, MESSAGES.empty);
+      ui.input.focus();
+      return;
+    }
+    Sound.prime();
+    const id = ++this.opId;
+    this.controller = new AbortController();
+    const { signal } = this.controller;
+
+    try {
+      this.set(STATES.VALIDATING, MESSAGES.validating);
+      await wait(TIMING.validate, signal);
+      if (id !== this.opId) return;
+      if (value !== CONFIG.password) return this.reject();
+
+      this.set(STATES.INITIATING, MESSAGES.initiating);
+      const [probe] = await Promise.all([probeDownload(CONFIG.downloadUrl, signal), wait(TIMING.prepareMin, signal)]);
+      if (id !== this.opId) return; // נסגר בינתיים: אין הורדה מאוחרת
+      if (!probe.proceed) {
+        this.set(STATES.ERROR, probe.message);
+        Sound.error();
+        return;
+      }
+
+      startDownload();
+      this.set(STATES.INITIATED, MESSAGES.initiated);
+      Sound.success();
+      Backdrop.celebrate();
+    } catch (error) {
+      if (isAbort(error) || id !== this.opId) return;
+      this.set(STATES.ERROR, MESSAGES.unexpected);
+    } finally {
+      if (id === this.opId) this.controller = null;
+    }
+  },
+
+  reject() {
+    this.set(STATES.INVALID, MESSAGES.invalid);
+    Sound.error();
+    View.shake();
+    ui.input.focus();
+    ui.input.select();
+  },
+
+  onInput() {
+    if (this.state === STATES.INVALID || this.state === STATES.ERROR) this.set(STATES.IDLE);
+  },
+
+  cancel() {
+    this.opId++; // מבטל כל המשך של פעולה קודמת
+    if (this.controller) this.controller.abort(new DOMException("Dialog closed", "AbortError"));
+    this.controller = null;
+    this.state = STATES.IDLE;
+  },
+};
+
+/* ── המודאל: פתיחה, סגירה, פוקוס ומקלדת ─────────────────────── */
+const Modal = {
+  openedAt: 0,
+  pressStartedOnBackdrop: false,
+
+  init() {
+    ui.open.addEventListener("click", () => this.open());
+    ui.close.addEventListener("click", () => this.close());
+    ui.dialog.addEventListener("close", () => this.onClosed());
+    ui.dialog.addEventListener("pointerdown", (event) => { this.pressStartedOnBackdrop = this.isBackdrop(event); });
+    ui.dialog.addEventListener("click", (event) => this.onClick(event));
+    ui.dialog.addEventListener("keydown", (event) => this.trapTab(event));
+    ui.field.addEventListener("animationend", () => ui.field.classList.remove("is-shaking"));
+    ui.reveal.addEventListener("click", () => View.setReveal(ui.reveal.getAttribute("aria-pressed") !== "true"));
+    ui.form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      Flow.submit();
+    });
+    ui.input.addEventListener("input", () => Flow.onInput());
+  },
+
+  open() {
+    if (ui.dialog.open) return;
+    this.reset();
+    ui.dialog.showModal();
+    this.openedAt = performance.now();
+    ui.input.focus();
+  },
+
+  close() {
+    if (ui.dialog.open) ui.dialog.close();
+  },
+
+  reset() {
+    Flow.cancel();
+    ui.input.value = "";
+    View.setReveal(false);
+    ui.field.classList.remove("is-shaking");
+    Flow.set(STATES.IDLE);
+  },
+
+  onClosed() {
+    Flow.cancel();
+    View.render(STATES.IDLE, "");
+    ui.open.focus();
+  },
+
+  isBackdrop(event) {
+    if (event.target !== ui.dialog) return false;
+    const r = ui.dialog.getBoundingClientRect();
+    return event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom;
+  },
+
+  onClick(event) {
+    const fromBackdrop = this.pressStartedOnBackdrop && this.isBackdrop(event);
+    this.pressStartedOnBackdrop = false;
+    if (fromBackdrop && performance.now() - this.openedAt > TIMING.backdropGuard) this.close();
+  },
+
+  focusables() {
+    return $$("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])", ui.dialog)
+      .filter((node) => !node.disabled && !node.hidden && node.getClientRects().length > 0);
+  },
+
+  trapTab(event) {
+    if (event.key !== "Tab") return;
+    const items = this.focusables();
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+    if (!ui.dialog.contains(active)) {
+      event.preventDefault();
+      first.focus();
+    } else if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  },
+};
+
+/* ── אתחול ───────────────────────────────────────────────────── */
+function boot(scene) {
+  Content.render();
+  View.bind();
+  Modal.init();
+  View.render(STATES.IDLE, "");
+  Fit.apply();
+  Backdrop.init(scene);
+  // גופנים נטענים באיחור (או נכשלים): מודדים מחדש. כשל טעינה אינו שובר דבר, נשארים עם ה-fallback.
+  if (document.fonts) {
+    document.fonts.ready.then(() => Backdrop.relayout()).catch(() => {});
+    document.fonts.addEventListener("loadingdone", () => Backdrop.relayout());
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   סצנה — ליקוי מלא. הדיסקה היא אלמנט DOM; הקנבס קורא את מיקומה.
+   ════════════════════════════════════════════════════════════════ */
+const SIDE_LAYOUT = "(orientation: landscape) and (min-width: 640px)";
+const TAU = Math.PI * 2;
+const PEARL = "238, 234, 245";
+const HALPHA = "255, 111, 142";
+
+function seededRandom(seed) {
+  return () => {
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const gaussian = (rand) => (rand() + rand() + rand() - 1.5) / 0.5;
+const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+
+const EclipseScene = {
+  init(backdrop) {
+    this.bd = backdrop;
+    this.umbra = $("[data-umbra]");
+    this.sprite = this.buildSprite();
+    this.intro = 0;
+    this.flareAge = -1;
+    this.resize();
+  },
+
+  resize() {
+    this.layout();
+    this.seed();
+  },
+
+  layout() {
+    const rect = this.umbra.getBoundingClientRect();
+    this.cx = rect.left + rect.width / 2;
+    this.cy = rect.top + rect.height / 2;
+    this.R = rect.width / 2;
+    // כנפי הקורונה נמתחות לכיוון הריק: אנכית כשהמידע בצדדים, אופקית כשהוא מעל ומתחת.
+    this.axis = matchMedia(SIDE_LAYOUT).matches ? Math.PI / 2 : 0;
+  },
+
+  seed() {
+    const rand = seededRandom(4664);
+    const compact = Prefs.compact;
+    const { width, height } = this.bd;
+    this.stars = Array.from({ length: compact ? 80 : 170 }, () => ({
+      x: rand() * width, y: rand() * height, s: 0.6 + rand() * 1.1,
+      a: 0.12 + rand() * 0.42, f: 0.8 + rand() * 2.2, p: rand() * TAU, d: 0.3 + rand() * 0.7,
+    }));
+    this.wings = Array.from({ length: compact ? 64 : 120 }, () => ({
+      side: rand() < 0.5 ? 0 : Math.PI, off: gaussian(rand) * 0.3,
+      len: 0.3 + Math.pow(rand(), 1.7) * 1.7, w: 0.05 + rand() * 0.12,
+      a: 0.05 + rand() * 0.1, f: 2.4 + rand() * 4.6, p: rand() * TAU, q: rand() * TAU,
+    }));
+    this.plumes = Array.from({ length: compact ? 40 : 70 }, () => ({
+      ang: rand() * TAU, len: 0.1 + rand() * 0.3, w: 0.02 + rand() * 0.035,
+      a: 0.04 + rand() * 0.06, f: 3 + rand() * 5, p: rand() * TAU,
+    }));
+    this.proms = Array.from({ length: 4 }, () => ({
+      ang: rand() * TAU, span: 0.035 + rand() * 0.05, h: 0.028 + rand() * 0.04, f: 1 + rand() * 1.6, p: rand() * TAU,
+    }));
+  },
+
+  /* סיב קורונה: טריז רך שמתחדד ודועך החוצה. נבנה פעם אחת ומשוכפל בטרנספורמציה. */
+  buildSprite() {
+    const w = 256, h = 32;
+    const canvas = document.createElement("canvas");
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    const img = ctx.createImageData(w, h);
+    for (let x = 0; x < w; x++) {
+      const u = x / (w - 1);
+      const half = Math.max(0.02, Math.pow(1 - u, 0.9));
+      const fade = Math.pow(1 - u, 1.8);
+      for (let y = 0; y < h; y++) {
+        const v = Math.abs(y - (h - 1) / 2) / ((h - 1) / 2);
+        const a = Math.exp(-Math.pow(v / half, 2) * 2.4) * fade;
+        const i = (y * w + x) * 4;
+        img.data[i] = 238; img.data[i + 1] = 234; img.data[i + 2] = 245;
+        img.data[i + 3] = Math.round(a * 255);
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return canvas;
+  },
+
+  frame(dt, t) {
+    this.intro = Math.min(1, this.intro + dt / 1.5);
+    if (this.flareAge >= 0) {
+      this.flareAge += dt;
+      if (this.flareAge > 2.4) this.flareAge = -1;
+    }
+    const p = this.bd.pointer;
+    this.draw(t, 0.12 + 0.88 * easeOut(this.intro), p.x, p.y);
+  },
+
+  still() {
+    this.flareAge = -1;
+    this.draw(7.3, 1, 0, 0);
+  },
+
+  celebrate() {
+    this.flareAge = 0;
+  },
+
+  flareEnvelope() {
+    const a = this.flareAge;
+    if (a < 0) return 0;
+    if (a < 0.18) return a / 0.18;
+    if (a < 0.55) return 1;
+    return Math.max(0, 1 - (a - 0.55) / 1.85);
+  },
+
+  draw(t, intensity, px, py) {
+    const { ctx, dpr, width, height } = this.bd;
+    const { cx, cy, R } = this;
+    const flare = this.flareEnvelope();
+    const I = intensity * (1 + 0.35 * flare);
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#09080E";
+    ctx.fillRect(0, 0, width, height);
+
+    // כוכבים: מעטים ועמומים, נצנוץ ופרלקסה עדינה לעכבר.
+    ctx.fillStyle = `rgb(${PEARL})`;
+    for (const s of this.stars) {
+      ctx.globalAlpha = s.a * (0.55 + 0.45 * Math.sin(t * s.f + s.p));
+      ctx.fillRect(s.x - px * 9 * s.d, s.y - py * 7 * s.d, s.s, s.s);
+    }
+
+    ctx.globalCompositeOperation = "lighter";
+
+    // הילה חיצונית, מוארכת לאורך ציר הכנפיים.
+    const cos = Math.cos(this.axis), sin = Math.sin(this.axis);
+    ctx.setTransform(dpr * cos * 2.1, dpr * sin * 2.1, -dpr * sin, dpr * cos, dpr * cx, dpr * cy);
+    const haze = ctx.createRadialGradient(0, 0, R, 0, 0, R * 2);
+    haze.addColorStop(0, `rgba(${PEARL}, ${0.1 * I})`);
+    haze.addColorStop(0.25, `rgba(${PEARL}, ${0.032 * I})`);
+    haze.addColorStop(1, `rgba(${PEARL}, 0)`);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = haze;
+    ctx.fillRect(-R * 2, -R * 2, R * 4, R * 4);
+
+    // כנפיים: סיבים ארוכים שאורכם פועם.
+    for (const s of this.wings) {
+      const ang = this.axis + s.side + s.off + 0.03 * Math.sin(t * 0.4 + s.q);
+      const len = R * s.len * (0.8 + 0.2 * Math.sin(t * s.f + s.p));
+      this.streamer(ang, R * 0.97, len, R * s.w, s.a * I);
+    }
+    // מברשות קוטביות: קצרות, מסביב לכל הדיסקה.
+    for (const s of this.plumes) {
+      const len = R * s.len * (0.75 + 0.25 * Math.sin(t * s.f + s.p));
+      this.streamer(s.ang, R * 0.97, len, R * s.w, s.a * I);
+    }
+
+    // טבעת פנימית בהירה צמודה לשפה.
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1;
+    const ring = ctx.createRadialGradient(cx, cy, R * 0.97, cx, cy, R * 1.22);
+    ring.addColorStop(0, `rgba(${PEARL}, ${0.85 * I})`);
+    ring.addColorStop(0.1, `rgba(${PEARL}, ${0.45 * I})`);
+    ring.addColorStop(0.3, `rgba(${PEARL}, ${0.14 * I})`);
+    ring.addColorStop(0.6, `rgba(${PEARL}, ${0.035 * I})`);
+    ring.addColorStop(1, `rgba(${PEARL}, 0)`);
+    ctx.fillStyle = ring;
+    ctx.fillRect(cx - R * 1.3, cy - R * 1.3, R * 2.6, R * 2.6);
+
+    // בליטות (prominences): לשונות ורודות רכות צמודות לשפה, גובהן מהבהב.
+    for (const p of this.proms) {
+      const h = R * p.h * (0.65 + 0.35 * Math.sin(t * p.f + p.p));
+      const c = Math.cos(p.ang), s = Math.sin(p.ang);
+      ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * (cx + c * R), dpr * (cy + s * R));
+      ctx.scale(1, (R * p.span) / h);
+      const tongue = ctx.createRadialGradient(0, 0, 0, 0, 0, h);
+      tongue.addColorStop(0, `rgba(${HALPHA}, ${0.5 * I})`);
+      tongue.addColorStop(0.5, `rgba(${HALPHA}, ${0.16 * I})`);
+      tongue.addColorStop(1, `rgba(${HALPHA}, 0)`);
+      ctx.fillStyle = tongue;
+      ctx.fillRect(-h, -h, h * 2, h * 2);
+    }
+
+    if (flare > 0) this.drawDiamond(flare, t);
+
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+  },
+
+  streamer(angle, r0, length, width, alpha) {
+    const { ctx, dpr } = this.bd;
+    const c = Math.cos(angle), s = Math.sin(angle);
+    ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * (this.cx + c * r0), dpr * (this.cy + s * r0));
+    ctx.globalAlpha = Math.min(1, alpha);
+    ctx.drawImage(this.sprite, 0, -width / 2, length, width);
+  },
+
+  /* רגע נדיר: "טבעת יהלום" — אור השמש חוזר בנקודה אחת על השפה. רק בייזום הורדה. */
+  drawDiamond(e, t) {
+    const { ctx, dpr } = this.bd;
+    const ang = -0.92;
+    const x = this.cx + Math.cos(ang) * this.R;
+    const y = this.cy + Math.sin(ang) * this.R;
+    const R = this.R;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1;
+    const bloom = ctx.createRadialGradient(x, y, 0, x, y, R * 0.9);
+    bloom.addColorStop(0, `rgba(255, 255, 255, ${0.95 * e})`);
+    bloom.addColorStop(0.06, `rgba(255, 255, 255, ${0.6 * e})`);
+    bloom.addColorStop(0.25, `rgba(${PEARL}, ${0.16 * e})`);
+    bloom.addColorStop(1, `rgba(${PEARL}, 0)`);
+    ctx.fillStyle = bloom;
+    ctx.fillRect(x - R, y - R, R * 2, R * 2);
+    ctx.lineCap = "round";
+    for (let k = 0; k < 4; k++) {
+      const a = ang + k * Math.PI / 4 + t * 0.12;
+      const len = R * (k % 2 ? 0.45 : 0.85) * (0.6 + 0.4 * e);
+      const g = ctx.createLinearGradient(x - Math.cos(a) * len, y - Math.sin(a) * len, x + Math.cos(a) * len, y + Math.sin(a) * len);
+      g.addColorStop(0, "rgba(255,255,255,0)");
+      g.addColorStop(0.5, `rgba(255,255,255,${0.7 * e})`);
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.strokeStyle = g;
+      ctx.lineWidth = Math.max(1, R * 0.006);
+      ctx.beginPath();
+      ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len);
+      ctx.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len);
+      ctx.stroke();
+    }
+  },
+};
+
+boot(EclipseScene);
+</script>
+</body>
+</html>

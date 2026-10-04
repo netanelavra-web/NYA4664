@@ -1,0 +1,1116 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#16121D">
+<title>ShadowDance — הורדה</title>
+<!-- Big Shoulders Display: קונדנסד ותמיר — אותיות כמו עמודים שעומדים על במה. לטיני בלבד: לשם המשחק ולסטטוס.
+     Rubik: השלמה עברית מוגדרת במפורש לכל טקסט עברי ולשמות הקבצים. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Rubik:wght@400;500;700&display=swap">
+<style>
+  :root {
+    /* פלטה — שלושה פנסים. הקיר עצמו הוא סכום שלושת הפנסים, לא צבע בפלטה */
+    --ink: #16121D;
+    --bone: #F4EEE4;
+    --dust: #B4ACBE;
+    --vermilion: #FF5A3C;
+    --jade: #2FC48A;
+    --cobalt: #4166FF;
+    --error: #FF8E78;   /* גוון בהיר של Vermilion לטקסט על Ink (≥4.5:1) */
+    --sheet: #1E1928;
+    --line: rgb(244 238 228 / 0.14);
+    --line-strong: rgb(244 238 228 / 0.36);
+
+    --font-display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", "DejaVu Sans Condensed", Arial, sans-serif;
+    --font-sans: "Rubik", "Segoe UI", "Arial Hebrew", Arial, sans-serif;
+
+    --vh: 1vh;
+    --pad-x: clamp(16px, 4.2vw, 80px);
+    --fs-xs: clamp(12px, 1.3vmin, 13.5px);
+    --fs-sm: clamp(13px, 1.5vmin, 15px);
+    --fs-md: clamp(14.5px, 1.75vmin, 17px);
+
+    /* רדיוסים: התווית חדה כמו כרטיס, הפעולה מעט רכה, המגירה רכה בפינות העליונות */
+    --radius-tag: 2px;
+    --radius-action: 5px;
+    --radius-sheet: 16px;
+    --radius-field: 6px;
+    --shadow-sheet: 0 -20px 60px rgb(10 8 14 / 0.45);
+
+    --spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+  @supports (height: 100dvh) { :root { --vh: 1dvh; } }
+  @supports (animation-timing-function: linear(0, 1)) {
+    :root { --spring: linear(0, 0.18 4%, 0.55 10%, 0.86 17%, 1.02 24%, 1.05 30%, 1.03 38%, 1 50%, 0.995 62%, 1); }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-block-size: 100vh;
+    min-block-size: 100dvh;
+    background: var(--ink);
+    color: var(--bone);
+    font-family: var(--font-sans);
+    font-size: var(--fs-md);
+    line-height: 1.5;
+  }
+  h1, h2, h3, p, ul, dl, dd { margin: 0; padding: 0; }
+  ul { list-style: none; }
+  button, input { font: inherit; color: inherit; }
+  .sr-only {
+    position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  .icon { inline-size: 1.25em; block-size: 1.25em; flex: none; }
+  :focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
+
+  .backdrop {
+    position: fixed; inset: 0; inline-size: 100%; block-size: 100%;
+    display: block; pointer-events: none; z-index: 0;
+  }
+
+  /* ── פריסה: במה (מעלה) ושוליים כהים ודוממים (מטה) ── */
+  .page {
+    position: relative; z-index: 1;
+    min-block-size: calc(var(--vh) * 100);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    padding: clamp(14px, 3.4vh, 40px) var(--pad-x) 0;
+    min-block-size: 0;
+  }
+  .status {
+    justify-self: start;
+    display: inline-flex; align-items: center; gap: 0.6em;
+    padding: 0.42em 0.85em 0.38em;
+    border-radius: var(--radius-tag);
+    background: var(--ink);
+    color: var(--bone);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(13px, 1.6vmin, 16px);
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+  }
+  .status__mark { inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--jade); flex: none; }
+
+  .title {
+    grid-row: 3;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: calc(min(12.5vw, calc(var(--vh) * 24)) * var(--fit, 1));
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--ink);
+    text-align: center;
+    white-space: nowrap;
+    margin-block-end: calc(var(--vh) * -0.6);
+  }
+  .title__text { display: inline-block; white-space: nowrap; }
+  .title__baseline { display: inline-block; inline-size: 0; block-size: 0; vertical-align: baseline; }
+
+  .apron {
+    background: var(--ink);
+    padding: clamp(16px, 3.6vh, 44px) var(--pad-x) clamp(16px, 4vh, 48px);
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.95fr) minmax(0, 1.9fr);
+    grid-template-areas:
+      "lede   file contents"
+      "action file contents";
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(24px, 4vw, 72px);
+    row-gap: clamp(12px, 2vh, 20px);
+  }
+  .lede { grid-area: lede; font-weight: 500; font-size: clamp(17px, 2.2vmin, 23px); line-height: 1.35; color: var(--bone); text-wrap: balance; }
+  .action { grid-area: action; display: grid; justify-items: start; align-content: start; gap: 0.6em; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 0.65em;
+    min-block-size: clamp(48px, 6.4vmin, 58px);
+    padding-inline: clamp(22px, 2.4vw, 32px);
+    border: 0;
+    border-radius: var(--radius-action);
+    background: var(--bone);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: clamp(15.5px, 1.9vmin, 18px);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  .cta:hover { background: #FFFFFF; transform: translateY(-2px); }
+  .cta:active { transform: translateY(0) scale(0.98); }
+  .hint { font-size: var(--fs-sm); color: var(--dust); }
+
+  .file { grid-area: file; display: grid; align-content: start; gap: 0.3em; }
+  .file__name { font-weight: 500; font-size: var(--fs-md); overflow-wrap: anywhere; }
+  .meta { display: flex; flex-wrap: wrap; font-size: var(--fs-sm); color: var(--dust); }
+  .meta__item { display: flex; gap: 0.35em; }
+  .meta__item + .meta__item::before { content: "·"; margin-inline: 0.55em; }
+  .meta__item[data-key="format"] .meta__label,
+  .meta__item[data-key="size"] .meta__label { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+
+  .contents { grid-area: contents; display: grid; align-content: start; gap: 0.7em; }
+  .contents__title { font-size: var(--fs-xs); font-weight: 500; color: var(--dust); }
+  .groups { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px, 2vh, 20px) clamp(16px, 2.6vw, 40px); }
+  .group__title { font-weight: 700; font-size: var(--fs-sm); line-height: 1.35; }
+  .group__items { display: flex; flex-wrap: wrap; gap: 0 0.95em; margin-block-start: 0.2em; font-size: var(--fs-sm); color: var(--dust); }
+  .group__slash { opacity: 0.7; }
+
+  /* ── מובייל ופורטרט ── */
+  @media (orientation: portrait), (max-width: 760px) {
+    .title { font-size: calc(min(13.5vw, calc(var(--vh) * 12.5)) * var(--fit, 1)); }
+    .apron {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto;
+      grid-template-areas: "lede" "file" "contents" "action";
+      row-gap: clamp(12px, 2.2vh, 22px);
+    }
+    .action { justify-items: stretch; text-align: center; margin-block-start: 4px; }
+    .cta { justify-content: center; }
+  }
+  @media (max-height: 680px) and (orientation: portrait) {
+    .apron { row-gap: 10px; padding-block: 14px 16px; }
+    .groups { row-gap: 8px; }
+  }
+
+  /* ── מודאל: מגירה שעולה מתוך השוליים, כך שהבמה נשארת גלויה ── */
+  .dialog {
+    padding: 0;
+    margin-block: auto 0;
+    border: 1px solid var(--line);
+    border-block-end: 0;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    background: var(--sheet);
+    color: var(--bone);
+    inline-size: min(34rem, 100vw);
+    max-inline-size: 100vw;
+    max-block-size: calc(var(--vh) * 100 - 24px);
+    overflow-y: auto;
+    box-shadow: var(--shadow-sheet);
+  }
+  .dialog::backdrop { background: rgb(12 10 18 / 0.38); }
+  .dialog[open] { animation: sheet-in 0.62s var(--spring) both; }
+  .dialog[open]::backdrop { animation: fade-in 0.3s ease-out both; }
+  @keyframes sheet-in { from { opacity: 0; transform: translateY(48px); } 25% { opacity: 1; } to { opacity: 1; transform: none; } }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .dialog__panel { display: grid; gap: 14px; padding: clamp(20px, 4vmin, 30px) clamp(20px, 4.4vmin, 34px) max(clamp(20px, 4vmin, 30px), env(safe-area-inset-bottom)); }
+  .dialog__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .dialog__title { font-size: clamp(20px, 2.6vmin, 24px); font-weight: 700; }
+  .dialog__desc { color: var(--dust); font-size: var(--fs-sm); }
+  .dialog__close {
+    inline-size: 40px; block-size: 40px; display: grid; place-items: center;
+    border: 0; border-radius: var(--radius-action); background: transparent; color: var(--dust);
+    cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .dialog__close:hover { background: rgb(244 238 228 / 0.08); color: var(--bone); }
+
+  .field-label { font-size: var(--fs-sm); font-weight: 500; margin-block-end: -6px; }
+  .field { position: relative; }
+  .field__input {
+    inline-size: 100%;
+    min-block-size: 50px;
+    padding-block: 10px;
+    padding-inline: 14px 52px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-field);
+    background: var(--ink);
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+  }
+  .field__input:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; border-color: var(--bone); }
+  .field__input[aria-invalid="true"] { border-color: var(--error); }
+  .field__input[readonly] { color: var(--dust); }
+  .field__reveal {
+    position: absolute; inset-block: 5px; inset-inline-end: 5px;
+    inline-size: 42px; display: grid; place-items: center;
+    border: 0; border-radius: 4px; background: transparent; color: var(--dust); cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .field__reveal:hover { background: rgb(244 238 228 / 0.08); color: var(--bone); }
+  .field__reveal .icon-hide { display: none; }
+  .field__reveal[aria-pressed="true"] .icon-show { display: none; }
+  .field__reveal[aria-pressed="true"] .icon-hide { display: block; }
+  .field.is-shaking { animation: shake 0.38s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-7px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(2px); }
+  }
+
+  .dialog__status { min-block-size: calc(2 * 1.5em + 6px); font-size: var(--fs-sm); display: grid; align-content: start; gap: 4px; }
+  .msg { display: flex; align-items: flex-start; gap: 8px; }
+  .msg__icon:empty { display: none; }
+  .msg__icon .icon { inline-size: 18px; block-size: 18px; margin-block-start: 1px; }
+  .msg[data-tone="error"] { color: var(--error); }
+  .msg[data-tone="success"] { color: var(--bone); }
+  .msg[data-tone="success"] .icon { color: var(--jade); }
+  .msg[data-tone="progress"] { color: var(--dust); }
+  .icon--progress { animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fallback { color: var(--bone); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); padding-inline-start: 26px; justify-self: start; }
+  .fallback:hover { text-decoration-color: var(--bone); }
+
+  .dialog__submit {
+    min-block-size: 50px; border: 0; border-radius: var(--radius-action);
+    background: var(--bone); color: var(--ink); font-weight: 700; cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+  }
+  .dialog__submit:hover { background: #FFFFFF; }
+  .dialog__submit[aria-disabled="true"] { opacity: 0.5; cursor: default; }
+  .dialog__submit[aria-disabled="true"]:hover { background: var(--bone); }
+  .demo-note { font-size: 11.5px; color: var(--dust); text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dialog[open] { animation: fade-in 0.16s ease-out both; }
+    .dialog[open]::backdrop { animation: none; }
+    .icon--progress, .field.is-shaking { animation: none; }
+    .cta { transition: none; }
+    .cta:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<canvas class="backdrop" data-backdrop aria-hidden="true"></canvas>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 3.5l17 17"/><path d="M10.6 5.6A9.7 9.7 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3.2 3.9M6.4 6.9A16.6 16.6 0 0 0 2.5 12S6 18.5 12 18.5a9.4 9.4 0 0 0 4.4-1.1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.4v.2"/></symbol>
+  <symbol id="i-progress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5" opacity="0.25"/><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.2"/></symbol>
+</svg>
+
+<main class="page">
+  <div class="stage">
+    <p class="status">
+      <span class="status__mark" aria-hidden="true"></span>
+      <span lang="en" dir="ltr" data-slot="status"></span>
+    </p>
+    <h1 class="title" data-title><span class="title__text" lang="en" dir="ltr" data-slot="game-name" data-fit="1.3"></span><span class="title__baseline" data-baseline aria-hidden="true"></span></h1>
+  </div>
+
+  <div class="apron">
+    <p class="lede">חבילת המשחק המלאה, במקום אחד.</p>
+    <div class="action">
+      <button class="cta" type="button" data-open-dialog aria-haspopup="dialog" aria-describedby="cta-hint">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-download"/></svg>
+        <span>הורדת ZIP מלא</span>
+      </button>
+      <p class="hint" id="cta-hint">נדרש קוד גישה להמשך</p>
+    </div>
+    <section class="file" aria-labelledby="file-heading">
+      <h2 class="sr-only" id="file-heading">פרטי הקובץ</h2>
+      <p class="file__name"><bdi dir="ltr" data-slot="file-name"></bdi></p>
+      <dl class="meta" data-slot="meta"></dl>
+    </section>
+    <section class="contents" aria-labelledby="contents-heading">
+      <h2 class="contents__title" id="contents-heading">תכולה בסיסית</h2>
+      <ul class="groups" data-slot="contents"></ul>
+    </section>
+  </div>
+</main>
+
+<dialog class="dialog" data-dialog aria-labelledby="dialog-title" aria-describedby="dialog-desc" data-state="idle">
+  <form class="dialog__panel" data-dialog-form novalidate>
+    <div class="dialog__head">
+      <h2 class="dialog__title" id="dialog-title">אימות גישה</h2>
+      <button class="dialog__close" type="button" data-dialog-close aria-label="סגירה">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <p class="dialog__desc" id="dialog-desc">ההורדה תתחיל לאחר הזנת קוד הגישה.</p>
+
+    <label class="field-label" for="access-code">קוד גישה</label>
+    <div class="field" data-field>
+      <input class="field__input" id="access-code" name="access-code" type="password" data-access-input
+             autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" dir="auto"
+             aria-describedby="dialog-status">
+      <button class="field__reveal" type="button" data-reveal aria-controls="access-code" aria-pressed="false" aria-label="הצגת קוד הגישה">
+        <svg class="icon icon-show" aria-hidden="true" focusable="false"><use href="#i-eye"/></svg>
+        <svg class="icon icon-hide" aria-hidden="true" focusable="false"><use href="#i-eye-off"/></svg>
+      </button>
+    </div>
+
+    <div class="dialog__status" id="dialog-status" role="status" aria-live="polite" aria-atomic="true">
+      <p class="msg" data-message data-tone="neutral"><span class="msg__icon" data-message-icon aria-hidden="true"></span><span data-message-text></span></p>
+      <a class="fallback" data-fallback hidden>ההורדה לא התחילה? לחץ כאן</a>
+    </div>
+
+    <button class="dialog__submit" type="submit" data-submit>אימות והורדה</button>
+    <p class="demo-note">ממשק הדגמה — אימות מקומי</p>
+  </form>
+</dialog>
+
+<script>
+"use strict";
+
+/* ════════════════════════════════════════════════════════════════
+   CONFIG — מקור האמת היחיד לנתוני הדף. זהה בשלוש הווריאציות.
+   ערך null אינו מוצג. אין להמציא כאן נתונים שאינם ידועים.
+   ════════════════════════════════════════════════════════════════ */
+const CONFIG = Object.freeze({
+  gameName: "ShadowDance",
+  version: "1.0",
+  downloadUrl: "./ShadowDance-Full-NYA.zip",
+  fileName: "ShadowDance-Full-NYA.zip",
+  // קוד גישה להדגמה. הבדיקה מתבצעת בדפדפן ולכן היא מחסום ממשקי בלבד, לא הגנה:
+  // הגנה אמיתית מחייבת אימות והרשאה בצד השרת (הקובץ עצמו נגיש לכל מי שיודע את הנתיב).
+  password: "אדמינתי",
+  // מערכת הפעלה: לא ידועה, ולכן אינה מוצגת.
+  os: null,
+  // הערכה בלבד: סכום עמודת Packed ברשימת הארכיון, לא גודל קובץ ה-ZIP שנמדד.
+  fileSize: "כ-140 MB",
+  // SHA256SUMS.txt שבתוך הארכיון מתייחס לקבצים שבו ולא ל-ZIP עצמו, ולכן אין כאן ערך.
+  sha256: null,
+  // תכולה בסיסית לפי מבנה הארכיון. "/" בסוף שם מסמן תיקייה.
+  contents: [
+    { title: "קוד המשחק וגרסה בנויה", items: ["src/", "dist/", "scripts/"] },
+    { title: "נכסים וקבצי עיצוב", items: ["assets/", "design/"] },
+    { title: "תיעוד ובדיקות", items: ["docs/", "tests/", "README.md"] },
+    { title: "הפעלה מקומית", items: ["index.html", "start.bat", "start.sh", "serve.py"] },
+  ],
+  // רקע חי ואפקט חגיגה. false: פריים סטטי וללא חגיגה (המשוב הטקסטואלי נשמר).
+  effects: true,
+  // צלילי משוב סינתטיים (Web Audio), רק בעקבות פעולת משתמש.
+  sounds: true,
+});
+
+/* ── מצבים, הודעות ותזמונים ───────────────────────────────────── */
+const STATES = Object.freeze({
+  IDLE: "idle",
+  VALIDATING: "validating",
+  INVALID: "invalid-password",
+  INITIATING: "initiating",
+  INITIATED: "initiated",
+  ERROR: "error",
+});
+
+const TONES = Object.freeze({
+  [STATES.IDLE]: "neutral",
+  [STATES.VALIDATING]: "progress",
+  [STATES.INVALID]: "error",
+  [STATES.INITIATING]: "progress",
+  [STATES.INITIATED]: "success",
+  [STATES.ERROR]: "error",
+});
+
+const MESSAGES = Object.freeze({
+  empty: "יש להזין קוד גישה.",
+  invalid: "קוד הגישה אינו נכון. נסה שוב.",
+  validating: "בודק קוד גישה…",
+  initiating: "מכין הורדה…",
+  initiated: "בקשת ההורדה נשלחה לדפדפן.",
+  notFound: "קובץ ההורדה לא נמצא בשרת (404).",
+  network: "לא ניתן להתחבר לשרת. בדוק את החיבור ונסה שוב.",
+  timeout: "השרת לא הגיב בזמן. נסה שוב.",
+  unexpected: "אירעה שגיאה בלתי צפויה. נסה שוב.",
+  server: (status) => `השרת החזיר שגיאה (${status}). ההורדה לא התחילה.`,
+});
+
+const TIMING = Object.freeze({
+  validate: 280, // משוב קצר ל"בודק קוד גישה…", לא המתנה מלאכותית ארוכה
+  prepareMin: 320, // זמן תצוגה מינימלי ל"מכין הורדה…" כדי שלא יהבהב
+  headTimeout: 10000,
+  backdropGuard: 400, // לחיצה כפולה על הכפתור הפותח לא תסגור את המודאל מיד
+  resizeDebounce: 150,
+});
+
+/* ── עזרים ────────────────────────────────────────────────────── */
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+  node.append(...children);
+  return node;
+}
+
+function debounce(fn, ms) {
+  let timer = 0;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+}
+
+function wait(ms, signal) {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) return reject(signal.reason);
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener("abort", () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    }, { once: true });
+  });
+}
+
+const isAbort = (error) => error && error.name === "AbortError";
+
+/* ── העדפות משתמש ─────────────────────────────────────────────── */
+// הערה: ב-Windows, כשהאפשרות "הצג אנימציות" כבויה, הדפדפן מדווח prefers-reduced-motion: reduce.
+const Prefs = {
+  motion: matchMedia("(prefers-reduced-motion: reduce)"),
+  finePointer: matchMedia("(hover: hover) and (pointer: fine)"),
+  coarse: matchMedia("(pointer: coarse)"),
+  get reducedMotion() { return this.motion.matches; },
+  get animate() { return CONFIG.effects && !this.reducedMotion; },
+  get compact() { return innerWidth < 720 || this.coarse.matches; },
+};
+
+/* ── תוכן: מילוי הדף מתוך CONFIG ─────────────────────────────── */
+const Content = {
+  render() {
+    document.title = `${CONFIG.gameName} — הורדה`;
+    this.fill("game-name", CONFIG.gameName);
+    this.fill("status", `RELEASE READY // V${CONFIG.version}`);
+    this.fill("file-name", CONFIG.fileName);
+    this.renderMeta();
+    this.renderContents();
+    for (const link of $$("[data-fallback]")) {
+      link.href = CONFIG.downloadUrl;
+      link.download = CONFIG.fileName;
+    }
+  },
+
+  fill(slot, value) {
+    for (const node of $$(`[data-slot="${slot}"]`)) node.textContent = value;
+  },
+
+  metaItems() {
+    const ext = CONFIG.fileName.includes(".") ? CONFIG.fileName.split(".").pop().toUpperCase() : null;
+    return [
+      { key: "format", label: "פורמט", value: ext },
+      { key: "version", label: "גרסה", value: CONFIG.version },
+      { key: "size", label: "גודל", value: CONFIG.fileSize },
+      { key: "os", label: "מערכת הפעלה", value: CONFIG.os },
+      { key: "sha256", label: "SHA-256", value: CONFIG.sha256, ltr: true },
+    ].filter((item) => item.value !== null && item.value !== undefined && item.value !== "");
+  },
+
+  renderMeta() {
+    const items = this.metaItems();
+    for (const list of $$('[data-slot="meta"]')) {
+      list.replaceChildren(...items.map((item) => el("div", { class: "meta__item", "data-key": item.key },
+        el("dt", { class: "meta__label" }, item.label),
+        el("dd", { class: "meta__value" }, item.ltr ? el("bdi", { dir: "ltr" }, item.value) : item.value),
+      )));
+    }
+  },
+
+  renderContents() {
+    const list = $('[data-slot="contents"]');
+    if (!list) return;
+    list.replaceChildren(...CONFIG.contents.map((group) => el("li", { class: "group" },
+      el("h3", { class: "group__title" }, group.title),
+      el("ul", { class: "group__items" }, ...group.items.map((name) => el("li", { class: "group__item" }, this.itemName(name)))),
+    )));
+  },
+
+  itemName(name) {
+    const isDir = name.endsWith("/");
+    const label = el("bdi", { dir: "ltr" }, isDir ? name.slice(0, -1) : name);
+    if (isDir) label.append(el("span", { class: "group__slash", "aria-hidden": "true" }, "/"));
+    return label;
+  },
+};
+
+/* ── התאמת כותרת לרוחב ──────────────────────────────────────────
+   גודל הבסיס ב-CSS בטוח גם לגופן חלופי רחב, כך שאין גלישה לפני שהגופנים נטענים.
+   כאן הוא מוקטן אם אינו נכנס, או מוגדל עד הערך שב-data-fit (למשל "1.3"). */
+const Fit = {
+  apply() {
+    for (const node of $$("[data-fit]")) {
+      const box = node.parentElement;
+      box.style.removeProperty("--fit");
+      const style = getComputedStyle(box);
+      const available = box.clientWidth - parseFloat(style.paddingInlineStart) - parseFloat(style.paddingInlineEnd);
+      const needed = node.getBoundingClientRect().width;
+      if (!(needed > 0 && available > 0)) continue;
+      const fit = Math.min((available / needed) * 0.98, parseFloat(node.dataset.fit) || 1);
+      if (Math.abs(fit - 1) > 0.002) box.style.setProperty("--fit", fit.toFixed(4));
+    }
+  },
+};
+
+/* ── אודיו: צלילים סינתטיים, רק אחרי פעולת משתמש. כשל אינו עוצר דבר ── */
+const Sound = (() => {
+  let ctx = null;
+
+  function prime() {
+    if (!CONFIG.sounds) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      ctx = ctx || new AudioCtx();
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
+    } catch {
+      ctx = null;
+    }
+  }
+
+  function tone({ freq, to = freq, start = 0, dur, type = "sine", gain }) {
+    const t0 = ctx.currentTime + start;
+    const osc = ctx.createOscillator();
+    const amp = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    osc.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+    amp.gain.setValueAtTime(0.0001, t0);
+    amp.gain.exponentialRampToValueAtTime(gain, t0 + 0.012);
+    amp.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(amp).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.03);
+  }
+
+  function play(notes) {
+    if (!CONFIG.sounds || !ctx || ctx.state === "closed") return;
+    try {
+      notes.forEach(tone);
+    } catch {
+      /* כשל באודיו אינו פוגע בתהליך */
+    }
+  }
+
+  return {
+    prime,
+    error: () => play([
+      { freq: 233, to: 175, dur: 0.15, type: "triangle", gain: 0.09 },
+      { freq: 196, to: 147, start: 0.12, dur: 0.22, type: "triangle", gain: 0.08 },
+    ]),
+    success: () => play([
+      { freq: 587.33, dur: 0.24, gain: 0.045 },
+      { freq: 880, start: 0.1, dur: 0.38, gain: 0.04 },
+    ]),
+  };
+})();
+
+/* ── רקע: לולאת אנימציה משותפת. הסצנה עצמה מוגדרת בכל וריאציה ── */
+const Backdrop = {
+  scene: null,
+  canvas: null,
+  ctx: null,
+  raf: 0,
+  last: 0,
+  time: 0,
+  width: 0,
+  height: 0,
+  dpr: 1,
+  pointer: { x: 0, y: 0, tx: 0, ty: 0 },
+
+  init(scene) {
+    this.scene = scene;
+    this.canvas = $("[data-backdrop]");
+    this.ctx = this.canvas.getContext("2d");
+    this.tick = this.tick.bind(this);
+    this.measure();
+    scene.init(this);
+    window.addEventListener("resize", debounce(() => this.relayout(), TIMING.resizeDebounce));
+    // גלילה אפשרית רק בזום גבוה או עם מקלדת וירטואלית; הסצנה מתעדכנת למיקום התוכן.
+    window.addEventListener("scroll", () => {
+      this.scene.layout();
+      if (!this.raf) this.drawStatic();
+    }, { passive: true });
+    document.addEventListener("visibilitychange", () => this.sync());
+    Prefs.motion.addEventListener("change", () => this.sync());
+    // אינטראקציית עכבר: דסקטופ בלבד, עדינה.
+    if (Prefs.finePointer.matches) {
+      window.addEventListener("pointermove", (event) => {
+        this.pointer.tx = (event.clientX / this.width) * 2 - 1;
+        this.pointer.ty = (event.clientY / this.height) * 2 - 1;
+      }, { passive: true });
+    }
+    this.sync();
+  },
+
+  measure() {
+    // devicePixelRatio מוגבל ל-1.5 לטובת ביצועים.
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = Math.round(this.width * this.dpr);
+    this.canvas.height = Math.round(this.height * this.dpr);
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+  },
+
+  relayout() {
+    Fit.apply();
+    this.measure();
+    this.scene.resize(this);
+    if (!this.raf) this.drawStatic();
+  },
+
+  sync() {
+    const run = Prefs.animate && !document.hidden;
+    if (run && !this.raf) {
+      this.last = performance.now();
+      this.raf = requestAnimationFrame(this.tick);
+    } else if (!run) {
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+      if (!document.hidden) this.drawStatic();
+    }
+  },
+
+  tick(now) {
+    // תנועה מבוססת זמן; dt מוגבל ל-50ms כדי שקפיצה בפריים לא תזניק את הסצנה.
+    const dt = Math.min((now - this.last) / 1000, 0.05);
+    this.last = now;
+    this.time += dt;
+    const ease = 1 - Math.exp(-dt * 2.5);
+    this.pointer.x += (this.pointer.tx - this.pointer.x) * ease;
+    this.pointer.y += (this.pointer.ty - this.pointer.y) * ease;
+    this.scene.frame(dt, this.time);
+    this.raf = requestAnimationFrame(this.tick);
+  },
+
+  drawStatic() {
+    this.scene.still();
+  },
+
+  celebrate() {
+    if (Prefs.animate) this.scene.celebrate();
+  },
+};
+
+/* ── בדיקת קיום הקובץ לפני ההורדה ─────────────────────────────── */
+async function probeDownload(url, signal) {
+  const target = new URL(url, document.baseURI);
+  const sameOriginHttp = /^https?:$/.test(location.protocol) && target.origin === location.origin;
+  // ב-file:// או ממקור אחר אין בדיקה מקדימה (HEAD חסום שם), וההורדה מתחילה ישירות.
+  // ההתנהגות עשויה להשתנות בין דפדפנים: ממקור אחר המאפיין download לא תמיד מכובד, וייתכן ניווט לקובץ.
+  if (!sameOriginHttp) return { proceed: true };
+
+  const probe = new AbortController();
+  const relay = () => probe.abort();
+  signal.addEventListener("abort", relay, { once: true });
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; probe.abort(); }, TIMING.headTimeout);
+
+  try {
+    const response = await fetch(target, { method: "HEAD", cache: "no-store", signal: probe.signal });
+    if (response.ok) return { proceed: true };
+    if (response.status === 404) return { proceed: false, message: MESSAGES.notFound };
+    // 405/501: השרת אינו תומך ב-HEAD. ממשיכים, בלי לטעון שהקובץ נבדק.
+    if (response.status === 405 || response.status === 501) return { proceed: true };
+    return { proceed: false, message: MESSAGES.server(response.status) };
+  } catch (error) {
+    if (signal.aborted) throw signal.reason;
+    return { proceed: false, message: timedOut ? MESSAGES.timeout : MESSAGES.network };
+  } finally {
+    clearTimeout(timer);
+    signal.removeEventListener("abort", relay);
+  }
+}
+
+function startDownload() {
+  const link = el("a", { href: CONFIG.downloadUrl, download: CONFIG.fileName, hidden: "" });
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
+
+/* ── ממשק המודאל: הצגת מצב בלבד ─────────────────────────────── */
+const ui = {};
+
+const View = {
+  bind() {
+    Object.assign(ui, {
+      open: $("[data-open-dialog]"),
+      dialog: $("[data-dialog]"),
+      form: $("[data-dialog-form]"),
+      close: $("[data-dialog-close]"),
+      input: $("[data-access-input]"),
+      reveal: $("[data-reveal]"),
+      field: $("[data-field]"),
+      submit: $("[data-submit]"),
+      message: $("[data-message]"),
+      messageText: $("[data-message-text]"),
+      messageIcon: $("[data-message-icon]"),
+      fallback: $("[data-fallback]"),
+    });
+  },
+
+  render(state, text) {
+    const tone = TONES[state];
+    const busy = state === STATES.VALIDATING || state === STATES.INITIATING;
+    const locked = busy || state === STATES.INITIATED;
+    ui.dialog.dataset.state = state;
+    ui.message.dataset.tone = tone;
+    ui.messageText.textContent = text;
+    ui.messageIcon.replaceChildren(text ? this.icon(tone) : "");
+    ui.input.setAttribute("aria-invalid", String(state === STATES.INVALID));
+    ui.input.readOnly = locked;
+    ui.submit.setAttribute("aria-disabled", String(locked));
+    ui.form.setAttribute("aria-busy", String(busy));
+    ui.fallback.hidden = state !== STATES.INITIATED;
+  },
+
+  icon(tone) {
+    const ids = { neutral: "i-info", progress: "i-progress", error: "i-alert", success: "i-check" };
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", `#${ids[tone]}`);
+    svg.setAttribute("class", `icon icon--${tone}`);
+    svg.setAttribute("focusable", "false");
+    svg.append(use);
+    return svg;
+  },
+
+  setReveal(visible) {
+    ui.input.type = visible ? "text" : "password";
+    ui.reveal.setAttribute("aria-pressed", String(visible));
+    ui.reveal.setAttribute("aria-label", visible ? "הסתרת קוד הגישה" : "הצגת קוד הגישה");
+  },
+
+  shake() {
+    if (Prefs.reducedMotion) return;
+    ui.field.classList.remove("is-shaking");
+    void ui.field.offsetWidth; // מאפשר הפעלה חוזרת של האנימציה
+    ui.field.classList.add("is-shaking");
+  },
+};
+
+/* ── ניהול מצב ותהליך ההורדה ─────────────────────────────────── */
+const Flow = {
+  state: STATES.IDLE,
+  opId: 0,
+  controller: null,
+
+  set(state, text = "") {
+    this.state = state;
+    View.render(state, text);
+  },
+
+  get locked() {
+    return [STATES.VALIDATING, STATES.INITIATING, STATES.INITIATED].includes(this.state);
+  },
+
+  async submit() {
+    if (this.locked) return; // נעילת שליחה חוזרת
+    const value = ui.input.value.trim();
+    if (!value) {
+      this.set(STATES.INVALID, MESSAGES.empty);
+      ui.input.focus();
+      return;
+    }
+    Sound.prime();
+    const id = ++this.opId;
+    this.controller = new AbortController();
+    const { signal } = this.controller;
+
+    try {
+      this.set(STATES.VALIDATING, MESSAGES.validating);
+      await wait(TIMING.validate, signal);
+      if (id !== this.opId) return;
+      if (value !== CONFIG.password) return this.reject();
+
+      this.set(STATES.INITIATING, MESSAGES.initiating);
+      const [probe] = await Promise.all([probeDownload(CONFIG.downloadUrl, signal), wait(TIMING.prepareMin, signal)]);
+      if (id !== this.opId) return; // נסגר בינתיים: אין הורדה מאוחרת
+      if (!probe.proceed) {
+        this.set(STATES.ERROR, probe.message);
+        Sound.error();
+        return;
+      }
+
+      startDownload();
+      this.set(STATES.INITIATED, MESSAGES.initiated);
+      Sound.success();
+      Backdrop.celebrate();
+    } catch (error) {
+      if (isAbort(error) || id !== this.opId) return;
+      this.set(STATES.ERROR, MESSAGES.unexpected);
+    } finally {
+      if (id === this.opId) this.controller = null;
+    }
+  },
+
+  reject() {
+    this.set(STATES.INVALID, MESSAGES.invalid);
+    Sound.error();
+    View.shake();
+    ui.input.focus();
+    ui.input.select();
+  },
+
+  onInput() {
+    if (this.state === STATES.INVALID || this.state === STATES.ERROR) this.set(STATES.IDLE);
+  },
+
+  cancel() {
+    this.opId++; // מבטל כל המשך של פעולה קודמת
+    if (this.controller) this.controller.abort(new DOMException("Dialog closed", "AbortError"));
+    this.controller = null;
+    this.state = STATES.IDLE;
+  },
+};
+
+/* ── המודאל: פתיחה, סגירה, פוקוס ומקלדת ─────────────────────── */
+const Modal = {
+  openedAt: 0,
+  pressStartedOnBackdrop: false,
+
+  init() {
+    ui.open.addEventListener("click", () => this.open());
+    ui.close.addEventListener("click", () => this.close());
+    ui.dialog.addEventListener("close", () => this.onClosed());
+    ui.dialog.addEventListener("pointerdown", (event) => { this.pressStartedOnBackdrop = this.isBackdrop(event); });
+    ui.dialog.addEventListener("click", (event) => this.onClick(event));
+    ui.dialog.addEventListener("keydown", (event) => this.trapTab(event));
+    ui.field.addEventListener("animationend", () => ui.field.classList.remove("is-shaking"));
+    ui.reveal.addEventListener("click", () => View.setReveal(ui.reveal.getAttribute("aria-pressed") !== "true"));
+    ui.form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      Flow.submit();
+    });
+    ui.input.addEventListener("input", () => Flow.onInput());
+  },
+
+  open() {
+    if (ui.dialog.open) return;
+    this.reset();
+    ui.dialog.showModal();
+    this.openedAt = performance.now();
+    ui.input.focus();
+  },
+
+  close() {
+    if (ui.dialog.open) ui.dialog.close();
+  },
+
+  reset() {
+    Flow.cancel();
+    ui.input.value = "";
+    View.setReveal(false);
+    ui.field.classList.remove("is-shaking");
+    Flow.set(STATES.IDLE);
+  },
+
+  onClosed() {
+    Flow.cancel();
+    View.render(STATES.IDLE, "");
+    ui.open.focus();
+  },
+
+  isBackdrop(event) {
+    if (event.target !== ui.dialog) return false;
+    const r = ui.dialog.getBoundingClientRect();
+    return event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom;
+  },
+
+  onClick(event) {
+    const fromBackdrop = this.pressStartedOnBackdrop && this.isBackdrop(event);
+    this.pressStartedOnBackdrop = false;
+    if (fromBackdrop && performance.now() - this.openedAt > TIMING.backdropGuard) this.close();
+  },
+
+  focusables() {
+    return $$("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])", ui.dialog)
+      .filter((node) => !node.disabled && !node.hidden && node.getClientRects().length > 0);
+  },
+
+  trapTab(event) {
+    if (event.key !== "Tab") return;
+    const items = this.focusables();
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+    if (!ui.dialog.contains(active)) {
+      event.preventDefault();
+      first.focus();
+    } else if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  },
+};
+
+/* ── אתחול ───────────────────────────────────────────────────── */
+function boot(scene) {
+  Content.render();
+  View.bind();
+  Modal.init();
+  View.render(STATES.IDLE, "");
+  Fit.apply();
+  Backdrop.init(scene);
+  // גופנים נטענים באיחור (או נכשלים): מודדים מחדש. כשל טעינה אינו שובר דבר, נשארים עם ה-fallback.
+  if (document.fonts) {
+    document.fonts.ready.then(() => Backdrop.relayout()).catch(() => {});
+    document.fonts.addEventListener("loadingdone", () => Backdrop.relayout());
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   סצנה — שלושה פנסים. כל פנס מטיל צל של השם בהקרנה מרכזית:
+   נקודה P על האותיות נופלת על הקיר ב-L + (P − L)·m. השכבות מחוברות כאור (lighter).
+   ════════════════════════════════════════════════════════════════ */
+const TAU = Math.PI * 2;
+const STAGE_DARK = "#221C2C";  // הקיר במקום שאף פנס לא מגיע אליו
+// גווני הפנסים (Vermilion, Jade, Cobalt) רוככו מעט כדי שסכומם יהיה לבן חם ולא "RGB".
+// amp: משרעת התנודה ביחס לרוחב השם. f: תדר (Hz). מחזורים שונים = ריקוד לא מתואם.
+const LAMPS = [
+  { rgb: "255, 108, 80", amp: 0.2, f: 0.105, p: 0.0, bob: 0.4 },
+  { rgb: "60, 198, 146", amp: 0.16, f: 0.083, p: 2.2, bob: 0.55 },
+  { rgb: "84, 118, 255", amp: 0.22, f: 0.131, p: 4.1, bob: 0.3 },
+];
+
+const easeInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
+const LampScene = {
+  init(backdrop) {
+    this.bd = backdrop;
+    this.title = $("[data-title]");
+    this.titleText = $("[data-slot='game-name']");
+    this.baseline = $("[data-baseline]");
+    this.layers = LAMPS.map(() => {
+      const canvas = document.createElement("canvas");
+      return { canvas, ctx: canvas.getContext("2d") };
+    });
+    this.converge = -1;
+    this.resize();
+  },
+
+  resize() {
+    const { width, height } = this.bd;
+    // שכבות הפנסים בחצי רזולוציה: האור רך ממילא, וזה חוסך פי ארבעה בפיקסלים.
+    this.scale = Prefs.compact ? 0.5 : 0.6;
+    for (const layer of this.layers) {
+      layer.canvas.width = Math.ceil(width * this.scale);
+      layer.canvas.height = Math.ceil(height * this.scale);
+    }
+    this.layout();
+  },
+
+  /* קריאת מיקום השם וקו הבסיס מה-DOM: הפריסה מכתיבה את הסצנה */
+  layout() {
+    const text = this.titleText.getBoundingClientRect();
+    const style = getComputedStyle(this.titleText);
+    this.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    this.word = this.titleText.textContent;
+    this.textX = text.left;
+    this.baseY = this.baseline.getBoundingClientRect().bottom;
+    this.capH = parseFloat(style.fontSize) * 0.78;
+    this.centerX = text.left + text.width / 2;
+    this.titleW = text.width;
+    // m (יחס ההקרנה) נפתר מגובה הבמה הפנוי: הצל מתחיל 0.4 גובה-אות מעל האותיות
+    // ומגיע עד מתחת לתווית הסטטוס. D הוא מרחק הפנסים מתחת לקו הבסיס.
+    const statusBottom = $(".status").getBoundingClientRect().bottom + 12;
+    const top = statusBottom + (this.baseY - statusBottom) * 0.14;
+    const lift = this.capH * 1.4;
+    this.m = Math.min(3, Math.max(1.3, (this.baseY - top - lift) / this.capH));
+    this.lampY = this.baseY + lift / (this.m - 1);
+  },
+
+  frame(dt, t) {
+    if (this.converge >= 0) {
+      this.converge += dt;
+      if (this.converge > 2.6) this.converge = -1;
+    }
+    this.draw(t, this.bd.pointer.x);
+  },
+
+  still() {
+    this.converge = -1;
+    this.draw(3.1, 0);
+  },
+
+  /* רגע נדיר (רק בהורדה): הפנסים מתכנסים, שלושת הצללים הופכים לצל שחור אחד, ונפרדים שוב */
+  celebrate() {
+    this.converge = 0;
+  },
+
+  convergeLevel() {
+    const a = this.converge;
+    if (a < 0) return 0;
+    if (a < 0.7) return easeInOut(a / 0.7);
+    if (a < 1.4) return 1;
+    return 1 - easeInOut(Math.min(1, (a - 1.4) / 1.2));
+  },
+
+  lampX(lamp, t, px) {
+    const sway = this.centerX + px * this.titleW * 0.05 + Math.sin(t * lamp.f * TAU + lamp.p) * this.titleW * lamp.amp;
+    return sway + (this.centerX - sway) * this.convergeLevel();
+  },
+
+  draw(t, px) {
+    const { ctx, dpr, width: W, height: H } = this.bd;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = STAGE_DARK;
+    ctx.fillRect(0, 0, W, H);
+    if (!this.word) return;
+
+    ctx.globalCompositeOperation = "lighter";
+    LAMPS.forEach((lamp, i) => {
+      const lx = this.lampX(lamp, t, px);
+      const ly = this.lampY + Math.sin(t * lamp.f * TAU * 1.7 + lamp.p) * this.capH * 0.12 * lamp.bob;
+      this.paintLamp(this.layers[i], lamp, lx, ly);
+      ctx.drawImage(this.layers[i].canvas, 0, 0, W, H);
+    });
+    ctx.globalCompositeOperation = "source-over";
+  },
+
+  paintLamp(layer, lamp, lx, ly) {
+    const { ctx: c, canvas } = layer;
+    const s = this.scale;
+    const { width: W } = this.bd;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.globalCompositeOperation = "source-over";
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    c.setTransform(s, 0, 0, s, 0, 0);
+
+    // בריכת האור: הפנסים מכוונים אל מרכז הבמה, ולכן המרכז לבן והשוליים צבעוניים מעט
+    const poolX = this.centerX + (lx - this.centerX) * 0.3;
+    const poolY = this.baseY - this.capH * 1.8;
+    const radius = Math.max(W * 0.7, this.baseY * 1.6);
+    const pool = c.createRadialGradient(poolX, poolY, 0, poolX, poolY, radius);
+    pool.addColorStop(0, `rgba(${lamp.rgb}, 0.88)`);
+    pool.addColorStop(0.5, `rgba(${lamp.rgb}, 0.7)`);
+    pool.addColorStop(1, `rgba(${lamp.rgb}, 0.08)`);
+    c.fillStyle = pool;
+    c.fillRect(0, 0, W, this.bd.height);
+
+    // הצל: השם בהקרנה מרכזית מהפנס, נחתך מתוך האור
+    c.globalCompositeOperation = "destination-out";
+    const m = this.m;
+    c.setTransform(s * m, 0, 0, s * m, s * lx * (1 - m), s * ly * (1 - m));
+    c.font = this.font;
+    c.textAlign = "left";
+    c.textBaseline = "alphabetic";
+    // עומק הצל: הצל מסיר כ-60% מאור הפנס (אור מוחזר ממלא אותו), ולכן חפיפות נשארות רכות.
+    // בהתכנסות העומק עולה כמעט למלא, וצל אחד כהה מופיע.
+    const depth = 0.6 + 0.36 * this.convergeLevel();
+    c.fillStyle = `rgba(0, 0, 0, ${depth})`;
+    c.filter = `blur(${(2.2 / m).toFixed(2)}px)`; // חצי-צל רך; בדפדפן ללא תמיכה הצל פשוט חד יותר
+    c.fillText(this.word, this.textX, this.baseY);
+    c.filter = "none";
+  },
+};
+
+boot(LampScene);
+</script>
+</body>
+</html>
