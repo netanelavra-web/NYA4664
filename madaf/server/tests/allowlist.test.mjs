@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {allowedRole,normalizeEmail} from '../allowlist.mjs';
-const list={emails:{'netanelavra@gmail.com':'admin','david.om.cohen@gmail.com':'customer','bad@x.com':'superuser'}};
-test('listed verified emails get their role, case-insensitive',()=>{assert.equal(allowedRole(list,'NetanelAvra@gmail.com',true),'admin');assert.equal(allowedRole(list,' david.om.cohen@gmail.com ',true),'customer');});
-test('unlisted, unverified, missing or unknown-role entries are denied',()=>{assert.equal(allowedRole(list,'stranger@gmail.com',true),null);assert.equal(allowedRole(list,'david.om.cohen@gmail.com',false),null);assert.equal(allowedRole(list,'david.om.cohen@gmail.com',undefined),null);assert.equal(allowedRole(list,undefined,true),null);assert.equal(allowedRole(null,'netanelavra@gmail.com',true),null);assert.equal(allowedRole(list,'bad@x.com',true),null);});
+import {grantedRole,isListedAdmin,normalizeEmail} from '../allowlist.mjs';
+const list={emails:{'netanelavra@gmail.com':'admin','david.om.cohen@gmail.com':'admin','old@x.com':'customer'}};
+test('listed verified emails are admins, case-insensitive',()=>{assert.equal(grantedRole(list,'NetanelAvra@gmail.com',true),'admin');assert.equal(grantedRole(list,' david.om.cohen@gmail.com ',true),'admin');});
+test('unlisted, unverified, non-admin entries or missing list are customers',()=>{for(const [e,v,l] of [['stranger@gmail.com',true,list],['david.om.cohen@gmail.com',false,list],['david.om.cohen@gmail.com',undefined,list],[undefined,true,list],['netanelavra@gmail.com',true,null],['old@x.com',true,list]]){assert.equal(isListedAdmin(l,e,v),false);assert.equal(grantedRole(l,e,v),'customer');}});
 test('normalizeEmail',()=>{assert.equal(normalizeEmail(' A@B.C '),'a@b.c');assert.equal(normalizeEmail(5),'');});

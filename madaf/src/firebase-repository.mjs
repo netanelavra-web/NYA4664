@@ -8,6 +8,9 @@ export async function createFirebaseRepository(config){
  const emit=()=>listeners.forEach(f=>f(structuredClone(state)));
  const fail=e=>{repo.error=e.message;emit();};
  async function load(user){const token=++generation;unsubs.forEach(f=>f());unsubs=[];state=blank();actor=null;emit();if(!user)return;
+ // session lets the server provision/sync the profile from the admin allowlist before we read it.
+ try{await fn.httpsCallable(functions,'madafCommand')({type:'session',key:'session-'+crypto.randomUUID()});}catch(e){console.warn('session sync failed',e);}
+ if(token!==generation)return;
  const profile=await fs.getDoc(fs.doc(db,'users',user.uid));if(token!==generation)return;actor=profile.exists()?profile.data():{id:user.uid,role:'customer',businessId:null,name:user.displayName||''};state.users=[actor];
  // No server-created profile yet: only onboarding is possible. Rules deny catalog reads until madafCommand creates it.
  if(!profile.exists()){emit();return;}

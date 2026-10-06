@@ -1,13 +1,12 @@
-// Allowlist: the single source of truth for who may use Madaf.
-// Stored at private/allowlist as {emails:{"user@gmail.com":"admin"|"customer"}}.
+// Admin allowlist: listed Google accounts get full access (admin + their own customer side).
+// Any other signed-in account is a customer only. Stored at private/allowlist as {emails:{"x@gmail.com":"admin"}}.
 // Firestore Rules deny all client access to private/**, so only the Admin SDK (scripts/allow.mjs, functions) can edit it.
 export const ALLOWLIST_PATH='private/allowlist';
-export const ROLES=['admin','customer'];
 export const normalizeEmail=email=>typeof email==='string'?email.trim().toLowerCase():'';
-// Returns the allowed role for a verified email, or null.
-export function allowedRole(allowlist,email,emailVerified){
+// True only for a verified email listed as admin.
+export function isListedAdmin(allowlist,email,emailVerified){
  const key=normalizeEmail(email);
- if(!key||emailVerified!==true)return null;
- const role=allowlist?.emails?.[key];
- return ROLES.includes(role)?role:null;
+ return Boolean(key&&emailVerified===true&&allowlist?.emails?.[key]==='admin');
 }
+// The role the server grants: admin when listed, otherwise customer.
+export const grantedRole=(allowlist,email,emailVerified)=>isListedAdmin(allowlist,email,emailVerified)?'admin':'customer';

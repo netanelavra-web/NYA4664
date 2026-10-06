@@ -6,3 +6,7 @@
 .changed-row{background:#a3543f0b}.rail-button[hidden]{display:none}.qty button,.qty input{min-height:44px}.order-tools input[type="search"]{flex:1;min-width:160px}.order-tools select{width:auto}.order-tools .date-field{flex:0 0 145px}.order-tools .date-field input{padding:8px}.product-preview-caption{padding:8px}.date-field input{min-height:44px}
 
 .inbox-sort{max-width:220px;display:flex;align-items:center;gap:10px;margin-bottom:15px;font-size:12px}.inbox-sort select{width:auto}.queue-item{transition:opacity .16s,transform .16s}.queue-item.resolved{opacity:.35;transform:translateX(-6px)}@media(max-width:1000px){.desk{grid-template-columns:1fr}.desk.has-selection .queue{display:none}.desk.has-selection .mobile-back{display:inline-flex}}
+/* Admin mode switch (management ↔ own customer side) */
+.mode-switch{white-space:nowrap;min-height:44px;font-weight:600}
+@media(max-width:760px){.topbar .mode-switch{grid-column:1/-1;order:9;min-height:40px;padding:6px 12px}}
+.changed-row small{color:#4a4f46}

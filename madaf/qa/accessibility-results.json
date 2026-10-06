@@ -18,7 +18,21 @@
   },
   {
     "name": "admin-order",
-    "violations": [],
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "nodes": [
+          {
+            "target": [
+              ".changed-row > td:nth-child(1) > small"
+            ],
+            "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.28 (foreground color: #61675d, background color: #edd9d0, font size: 8.1pt (10.8333px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ],
     "incomplete": [
       "color-contrast"
     ]
