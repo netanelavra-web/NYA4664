@@ -34,9 +34,26 @@
 .overlay.closing .drawer{animation:to-right .24s var(--ease-out) forwards}
 .overlay.closing .drawer.tools{animation-name:to-left}
 .overlay.closing .dialog{animation:dialog-out .2s ease forwards}
-main.page.view-enter{animation:view-in .3s var(--ease-out)}
+/* Section change: tabs and page frame stay put; only the text and content beneath them ease in */
+main.page.view-enter>:not(.intro):not(.admin-nav){animation:view-in .34s var(--ease-out)}
+main.page.view-enter>.intro>div{animation:fade-in .26s ease}
+.admin-nav button{transition:background-color .25s ease,color .25s ease}
 /* Living cart: light surface; on wide screens it is anchored to the side from the start and only grows upward */
 .living{background:var(--surface);color:var(--ink);border:1px solid var(--line);transition:height .32s var(--ease-out),box-shadow .32s ease}
 .living .primary{background:var(--clay);color:#fff}
 .living.expanded{box-shadow:0 24px 70px #24271f22}
 @media(min-width:1200px){.living,.living.expanded{left:3vw;right:auto;width:360px;max-width:360px;margin:0;bottom:25px}body .catalog{transition:margin .32s var(--ease-out)}}
+/* Drawers: clip instead of hidden so focusing inside never scrolls the overlay mid-slide */
+.drawer-overlay{overflow:clip}
+/* Scrollbars: thin and invisible until the element is scrolled, then fade out (class removed after 1.5s) */
+*{scrollbar-width:thin;scrollbar-color:transparent transparent}
+.scrolling{scrollbar-color:#61675d70 transparent}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:transparent;border-radius:6px}
+.scrolling::-webkit-scrollbar-thumb{background:#61675d70}
+/* Reduced motion: no sliding or moving, but gentle fades instead of hard cuts */
+@media(prefers-reduced-motion:reduce){
+.overlay,.drawer,.drawer.tools,.dialog,main.page.view-enter>:not(.intro):not(.admin-nav),main.page.view-enter>.intro>div{animation:fade-in .2s ease!important}
+.overlay.closing,.overlay.closing .drawer,.overlay.closing .drawer.tools,.overlay.closing .dialog{animation:fade-out .18s ease forwards!important}
+.living{transition:opacity .2s ease!important}}
