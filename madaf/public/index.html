@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
-<meta name="theme-color" content="#EDEBE4">
+<meta name="theme-color" content="#F3EFE7">
 <meta name="description" content="מדף — מערכת הזמנות לעסקים של CLOUD-NYA. הכניסה לחשבונות מורשים בלבד.">
 <meta name="robots" content="noindex">
 <title>מדף — CLOUD-NYA</title>
@@ -15,7 +15,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600&family=Frank+Ruhl+Libre:wght@300;400;500&display=swap">
 <style>
   :root {
-    --limewash: #EDEBE4; --ink: #1A1E2C; --graphite: #3D4150; --leaf: #2D5B3B; --rule: rgb(26 30 44 / 0.22);
+    /* פלטת מדף: נייר, דיו, חימר (פעולה) וירוק מרווה (סטטוס). */
+    --limewash: #F3EFE7; --ink: #272B27; --graphite: #4F554C; --leaf: #40654D; --clay: #954632; --clay-deep: #7E3A29; --rule: rgb(39 43 39 / 0.22);
     --font-serif: "Frank Ruhl Libre", "David Libre", David, "Times New Roman", serif;
     --font-sans: "Assistant", "Segoe UI", "Arial Hebrew", Arial, sans-serif;
     --vh: 1vh;
@@ -25,8 +26,8 @@
     --fs-sm: clamp(13px, 1.5vmin, 15px);
     --fs-md: clamp(15px, 1.8vmin, 18px);
     --sx: 1; --sy: 1.4;
-    --shadow-action: calc(var(--sx) * 6px) calc(var(--sy) * 6px) 14px -6px rgb(38 44 70 / 0.42);
-    --shadow-action-hover: calc(var(--sx) * 10px) calc(var(--sy) * 10px) 22px -8px rgb(38 44 70 / 0.4);
+    --shadow-action: calc(var(--sx) * 6px) calc(var(--sy) * 6px) 14px -6px rgb(70 45 30 / 0.38);
+    --shadow-action-hover: calc(var(--sx) * 10px) calc(var(--sy) * 10px) 22px -8px rgb(70 45 30 / 0.36);
   }
   @supports (height: 100dvh) { :root { --vh: 1dvh; } }
   *, *::before, *::after { box-sizing: border-box; }
@@ -35,7 +36,7 @@
   h1, p, ul { margin: 0; padding: 0; }
   ul { list-style: none; }
   :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-  .skip { position: absolute; inset-inline-start: 12px; inset-block-start: -60px; z-index: 5; background: var(--ink); color: var(--limewash); padding: 8px 14px; border-radius: 4px; }
+  .skip { position: absolute; inset-inline-start: 12px; inset-block-start: -60px; z-index: 5; background: var(--ink); color: #FFFFFF; padding: 8px 14px; border-radius: 4px; }
   .skip:focus { inset-block-start: 12px; }
   .backdrop { position: fixed; inset: 0; inline-size: 100%; block-size: 100%; pointer-events: none; z-index: 0; }
 
@@ -59,12 +60,12 @@
   .cta {
     display: inline-flex; align-items: center; gap: 0.7em;
     min-block-size: clamp(50px, 7vmin, 60px); padding-inline: clamp(26px, 3vw, 38px);
-    border-radius: 4px; background: var(--ink); color: var(--limewash); text-decoration: none;
+    border-radius: 4px; background: var(--clay); color: #FFFFFF; text-decoration: none;
     font-weight: 600; font-size: clamp(16px, 1.9vmin, 18px);
     box-shadow: var(--shadow-action);
     transition: box-shadow 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
   }
-  .cta:hover { box-shadow: var(--shadow-action-hover); transform: translate(-1px, -2px); background: #232839; }
+  .cta:hover { box-shadow: var(--shadow-action-hover); transform: translate(-1px, -2px); background: var(--clay-deep); }
   .cta:active { transform: none; }
   .cta svg { inline-size: 1.25em; block-size: 1.25em; }
   .hint { font-size: var(--fs-sm); color: var(--graphite); }
@@ -222,9 +223,9 @@ const Backdrop = {
    סצנה — אור בין עלים. קנבסים קטנים שמוגדלים: הטשטוש הוא צל רך אמיתי, בלי filter.
    ════════════════════════════════════════════════════════════════ */
 const TAU = Math.PI * 2;
-const LIT = "#EFEDE6";     // קיר מואר בשמש
-const LIT_WARM = "#F6F2E8"; // קרוב יותר לחלון: מעט חם ובהיר יותר
-const SHADE = "#C8CCD4";   // קיר בצל: כחלחל, מואר בשמיים. נבחר כך שטקסט Graphite שומר על ≥4.5:1
+const LIT = "#F6F2EA";     // קיר מואר בשמש
+const LIT_WARM = "#FBF7EE"; // קרוב יותר לחלון: מעט חם ובהיר יותר
+const SHADE = "#DDD5C5";   // צל חם בגוון נייר המדף. נבחר כך שטקסט Graphite (#4F554C) שומר על ≥4.5:1 (5.26:1)
 const PATCH = [[0.1, -0.08], [0.86, -0.03], [1.1, 1.1], [0.27, 1.07]]; // השמש דרך החלון, בשברי מסך
 
 function seededRandom(seed) {
