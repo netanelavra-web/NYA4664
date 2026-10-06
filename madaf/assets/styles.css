@@ -10,3 +10,7 @@
 .mode-switch{white-space:nowrap;min-height:44px;font-weight:600}
 @media(max-width:760px){.topbar .mode-switch{grid-column:1/-1;order:9;min-height:40px;padding:6px 12px}}
 .changed-row small{color:#4a4f46}
+/* Sign-in: brand logo and Google button */
+.brand-logo{display:block;inline-size:min(260px,62vw);block-size:auto}
+.google-login{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;font-size:17px}
+.google-login svg{inline-size:20px;block-size:20px;flex:none}
