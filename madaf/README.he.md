@@ -41,6 +41,18 @@ firebase deploy --project madaf-cloudnya --only functions
 ```
 ה-predeploy בונה את `public/app/` ומעתיק את `src/core.mjs` אל `server/domain/`.
 
+## אם פעם מוחקים blocking function
+‏Firebase לא מנקה את הרישום שלה ב-Auth, ואז אף אחד לא יכול להתחבר. בודקים ומנקים:
+```bash
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "X-Goog-User-Project: madaf-cloudnya" "https://identitytoolkit.googleapis.com/admin/v2/projects/madaf-cloudnya/config" | grep -c functionUri   # 0 = תקין
+curl -s -X PATCH -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "X-Goog-User-Project: madaf-cloudnya" -H "Content-Type: application/json" -d '{"blockingFunctions":{}}' "https://identitytoolkit.googleapis.com/admin/v2/projects/madaf-cloudnya/config?updateMask=blockingFunctions"
+```
+
+## עדכון קוד
+```bash
+cd ~/NYA4664/madaf && git pull && npm install --prefix server --no-audit --no-fund && firebase deploy --project madaf-cloudnya
+```
+
 ## גיבוי Firestore
 פעם אחת יוצרים bucket פרטי לגיבויים:
 ```bash
