@@ -1,0 +1,54 @@
+{
+  "testedAt": "2026-10-06T10:23:51.381Z",
+  "results": [
+    {
+      "name": "200 product catalog: quantity and Quick View preserve rail",
+      "status": "PASS"
+    },
+    {
+      "name": "Living Order pointer drag opens and closes",
+      "status": "PASS"
+    },
+    {
+      "name": "edge drag opens navigation and drawer drag closes",
+      "status": "PASS"
+    },
+    {
+      "name": "pointercancel resets partial edge surface",
+      "status": "PASS"
+    },
+    {
+      "name": "dialog focus cycles and Escape restores opener",
+      "status": "PASS"
+    },
+    {
+      "name": "external draft edit warns without replacing current quantity",
+      "status": "PASS"
+    },
+    {
+      "name": "product creation with uploaded image and opening audit",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate SKU inline validation and server guard",
+      "status": "PASS"
+    },
+    {
+      "name": "inactive category retained when editing existing product",
+      "status": "PASS"
+    },
+    {
+      "name": "reduced-motion preference removes animation",
+      "status": "PASS"
+    },
+    {
+      "name": "admin order filters include all terminal states and dates",
+      "status": "PASS"
+    },
+    {
+      "name": "no uncaught exceptions",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

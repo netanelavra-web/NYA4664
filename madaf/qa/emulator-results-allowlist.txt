@@ -1,0 +1,28 @@
+Run 2026-10-06 (allowlist hardening). Command: env -u JAVA_TOOL_OPTIONS -u HTTP(S)_PROXY firebase emulators:exec --only auth,firestore,storage --project demo-madaf "sh scripts/emulator-qa.sh"
+Commands via MADAF_DIRECT_HANDLER (HTTP callable and Auth blocking functions remain unverified until the live deploy).
+
+ok 1 - transaction handler concurrent submit: only one consumes final stock
+ok 2 - transaction handler replay creates no second order or inventory movement
+ok 3 - server rejects another business order and forged administrator command
+ok 4 - request blocks picking; cancellation atomically restores once
+ok 5 - inactive admin cannot replay receipt to obtain private data
+ok 6 - unlisted account is denied even with a valid token; cannot onboard or read
+ok 7 - listed newcomer can onboard; removal from allowlist blocks the next call without redeploy
+ok 8 - a customer listing cannot claim an admin profile and vice versa
+# pass 8
+# fail 0
+ok 1 - tenant can read only own business and scoped orders
+ok 2 - customer cannot read inactive products or self-approve
+ok 3 - even admins cannot directly mutate inventory or audit
+ok 4 - anonymous reads are denied
+ok 5 - signed-in stranger without a profile reads nothing but its own (missing) profile
+ok 6 - deactivated member loses catalog and business access
+ok 7 - nobody, not even admin, reads or writes the allowlist from a client
+# pass 7
+# fail 0
+ok 2 - oversized and non-image uploads denied; anonymous read denied
+ok 1 - admin image upload succeeds; customer and inactive admin uploads denied
+ok 2 - oversized and non-image uploads denied; anonymous read denied
+ok 3 - signed-in stranger without a profile cannot read product images
+# pass 3
+# fail 0

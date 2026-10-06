@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function signed(){return request.auth != null;}
+  function profilePath(){return /databases/$(database)/documents/users/$(request.auth.uid);}
+  function profile(){return get(profilePath()).data;}
+  // A member is a signed-in account with a server-created, active profile. Profiles are created only by
+  // madafCommand (onboard, after the allowlist check) or bootstrap; removal sets active=false.
+  function member(){return signed() && exists(profilePath()) && profile().get('active',true) == true;}
+  function admin(){return member() && profile().role == 'admin';}
+  function owns(businessId){return member() && profile().businessId == businessId;}
+  match /users/{uid}{allow read: if signed() && (request.auth.uid == uid || admin());}
+  match /config/public {allow read: if member();}
+  match /businesses/{id}{allow read: if admin() || owns(id);}
+  match /orders/{id}{allow read: if admin() || owns(resource.data.businessId);}
+  match /products/{id}{allow read: if admin() || (member() && resource.data.active == true);}
+  match /categories/{id}{allow read: if admin() || (member() && resource.data.active == true);}
+  match /inventoryEvents/{id}{allow read: if admin();}
+  match /auditEvents/{id}{allow read: if admin();}
+  match /notifications/{id}{allow read: if admin();}
+  // private/** (meta, allowlist) and commandReceipts/** fall through: no client access at all.
+  match /{document=**}{allow write: if false;}
+ }
+}

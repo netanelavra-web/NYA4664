@@ -1,0 +1,63 @@
+{
+  "testedAt": "2026-10-06T10:23:44.497Z",
+  "engine": "141.0.7390.37",
+  "results": [
+    {
+      "name": "desktop customer loads without errors",
+      "status": "PASS"
+    },
+    {
+      "name": "normalized SKU search and clear",
+      "status": "PASS"
+    },
+    {
+      "name": "quantity + direct entry and cart expansion",
+      "status": "PASS"
+    },
+    {
+      "name": "quick view Escape restores focus",
+      "status": "PASS"
+    },
+    {
+      "name": "checkout submits and clears draft",
+      "status": "PASS"
+    },
+    {
+      "name": "customer detail includes snapshot timeline and requests",
+      "status": "PASS"
+    },
+    {
+      "name": "admin Inbox and creation form open",
+      "status": "PASS"
+    },
+    {
+      "name": "inventory adjustment and audit",
+      "status": "PASS"
+    },
+    {
+      "name": "admin desktop screenshot",
+      "status": "PASS"
+    },
+    {
+      "name": "new business isolation onboarding",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile catalog and rail context",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile living cart open and note persists",
+      "status": "PASS"
+    },
+    {
+      "name": "standalone file opens and operates",
+      "status": "PASS"
+    },
+    {
+      "name": "no uncaught JavaScript exceptions",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

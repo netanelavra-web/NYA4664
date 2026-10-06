@@ -1,0 +1,44 @@
+✔ customer projection removes every other tenant and private audit channel (1.885561ms)
+✔ unonboarded user never receives orphan orders (0.209907ms)
+✔ demo serializes commands from two independent repositories (32.887049ms)
+✔ new account onboards separately without replacing seeded business (15.01236ms)
+✔ execute is immutable; failed stock transaction leaves original entirely unchanged (21.101524ms)
+✔ idempotency retry restores no stock and consumes none; changed payload rejected (8.542702ms)
+✔ forged admin or different business membership denied (5.024959ms)
+✔ new onboarding creates unique entity without touching existing business (6.137138ms)
+✔ first approval updates actual business; other queued orders remain pending (6.769814ms)
+✔ request exclusion and pending request blocks picking (5.983767ms)
+✔ cancel restores exactly once and clears request (3.825897ms)
+✔ stale concurrent manager decision rejected (4.18108ms)
+✔ competing orders on last stock only one succeeds (3.158016ms)
+✔ change preserves original price and VAT; applies stock delta (4.682167ms)
+✔ minimum validation on requested changes and admin revised proposals (3.732715ms)
+✔ conflict persists request without mutating stock and still blocks picking (4.386298ms)
+✔ disabled cart product rejected; disabled existing line can be retained (3.06555ms)
+✔ direct stock edits and normalized SKU duplicates rejected (3.567901ms)
+✔ new product and category creation works and opening inventory audited (2.808634ms)
+✔ inactive current category retained; category in use cannot delete (2.880192ms)
+✔ business identity locked after ordering and snapshots immutable (9.51305ms)
+✔ quantity validation blocks negative fractions duplicate and empty items (5.356166ms)
+✔ price changes need acknowledgement and disabled business cannot submit (4.515245ms)
+✔ admin initial edit is atomic and original price preserved (3.873622ms)
+✔ terminal rejected order cannot restore twice (5.580172ms)
+✔ all successful order transitions append events and outbox entries (3.980599ms)
+✔ new proposal item keeps price at proposal approval and admin added item gets current price (5.803623ms)
+✔ inactive member denied and required product image description validated (3.345094ms)
+✔ onboarding response loss can replay with old or refreshed actor without creating second business (4.181038ms)
+✔ demo onboard creates new business and retry keeps identity (23.689296ms)
+✔ quota failure commits neither memory nor storage (18.277509ms)
+✔ two repository instances serialize competing stock mutations (17.630454ms)
+✔ without locks demo state is isolated and does not overwrite durable storage (13.021469ms)
+✔ queued command cannot run under replacement session identity (7.695058ms)
+✔ signed-out commands and customer image uploads denied (4.927447ms)
+✔ queued customer submission must not move to another business on session switch (11.867546ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 290.071208

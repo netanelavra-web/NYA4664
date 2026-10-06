@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#EDEBE4">
+<meta name="description" content="מדף — מערכת הזמנות לעסקים של CLOUD-NYA. הכניסה לחשבונות מורשים בלבד.">
+<meta name="robots" content="noindex">
+<title>מדף — CLOUD-NYA</title>
+<link rel="icon" href="/assets/brand/cloud-nya-logo.png" type="image/png">
+<!-- Frank Ruhl Libre לכותרות, Assistant לממשק — אותה שפה של דף ההורדה של ShadowDance ("אור בין עלים"). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600&family=Frank+Ruhl+Libre:wght@300;400;500&display=swap">
+<style>
+  :root {
+    --limewash: #EDEBE4; --ink: #1A1E2C; --graphite: #3D4150; --leaf: #2D5B3B; --rule: rgb(26 30 44 / 0.22);
+    --font-serif: "Frank Ruhl Libre", "David Libre", David, "Times New Roman", serif;
+    --font-sans: "Assistant", "Segoe UI", "Arial Hebrew", Arial, sans-serif;
+    --vh: 1vh;
+    --pad-x: clamp(20px, 6vw, 112px);
+    --pad-y: clamp(16px, 6vh, 80px);
+    --fs-xs: clamp(12px, 1.3vmin, 13.5px);
+    --fs-sm: clamp(13px, 1.5vmin, 15px);
+    --fs-md: clamp(15px, 1.8vmin, 18px);
+    --sx: 1; --sy: 1.4;
+    --shadow-action: calc(var(--sx) * 6px) calc(var(--sy) * 6px) 14px -6px rgb(38 44 70 / 0.42);
+    --shadow-action-hover: calc(var(--sx) * 10px) calc(var(--sy) * 10px) 22px -8px rgb(38 44 70 / 0.4);
+  }
+  @supports (height: 100dvh) { :root { --vh: 1dvh; } }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { margin: 0; background: var(--limewash); color: var(--ink); font-family: var(--font-sans); font-size: var(--fs-md); line-height: 1.5; }
+  h1, p, ul { margin: 0; padding: 0; }
+  ul { list-style: none; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .skip { position: absolute; inset-inline-start: 12px; inset-block-start: -60px; z-index: 5; background: var(--ink); color: var(--limewash); padding: 8px 14px; border-radius: 4px; }
+  .skip:focus { inset-block-start: 12px; }
+  .backdrop { position: fixed; inset: 0; inline-size: 100%; block-size: 100%; pointer-events: none; z-index: 0; }
+
+  /* פריסה: מסך אחד בלי גלילה. התחלה: סימן, שם ופעולה. סיום: לוגו וקולופון */
+  .page {
+    position: relative; z-index: 1;
+    block-size: calc(var(--vh) * 100); min-block-size: 480px;
+    padding: var(--pad-y) var(--pad-x);
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: "status brand" "hero brand" "action colophon";
+    column-gap: clamp(32px, 7vw, 140px);
+  }
+  .status { grid-area: status; display: inline-flex; align-items: center; gap: 0.65em; justify-self: start; font-weight: 600; font-size: var(--fs-xs); letter-spacing: 0.14em; }
+  .status__mark { inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--leaf); }
+  .hero { grid-area: hero; align-self: center; display: grid; gap: clamp(8px, 2vh, 22px); }
+  .title { font-family: var(--font-serif); font-weight: 400; font-size: clamp(64px, min(13vw, calc(var(--vh) * 22)), 220px); line-height: 0.9; letter-spacing: -0.01em; }
+  .lede { font-family: var(--font-serif); font-size: clamp(18px, 2.6vmin, 30px); line-height: 1.35; color: var(--graphite); max-inline-size: 19em; }
+  .action { grid-area: action; display: grid; justify-items: start; gap: 0.6em; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 0.7em;
+    min-block-size: clamp(50px, 7vmin, 60px); padding-inline: clamp(26px, 3vw, 38px);
+    border-radius: 4px; background: var(--ink); color: var(--limewash); text-decoration: none;
+    font-weight: 600; font-size: clamp(16px, 1.9vmin, 18px);
+    box-shadow: var(--shadow-action);
+    transition: box-shadow 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
+  }
+  .cta:hover { box-shadow: var(--shadow-action-hover); transform: translate(-1px, -2px); background: #232839; }
+  .cta:active { transform: none; }
+  .cta svg { inline-size: 1.25em; block-size: 1.25em; }
+  .hint { font-size: var(--fs-sm); color: var(--graphite); }
+  .brand { grid-area: brand; align-self: start; justify-self: end; }
+  .brand img { display: block; inline-size: clamp(88px, 12vmin, 150px); block-size: auto; }
+  .colophon { grid-area: colophon; align-self: end; display: grid; gap: 0; max-inline-size: 30rem; }
+  .colophon li { border-block-start: 1px solid var(--rule); padding-block: clamp(7px, 1.4vh, 13px); display: flex; justify-content: space-between; gap: 1em; font-size: var(--fs-sm); color: var(--graphite); }
+  .colophon li:last-child { border-block-end: 1px solid var(--rule); }
+  .colophon strong { font-family: var(--font-serif); font-weight: 500; font-size: var(--fs-md); color: var(--ink); }
+
+  /* מובייל ופורטרט: טור אחד, הפעולה בתחתית בהישג האגודל */
+  @media (orientation: portrait), (max-width: 760px) {
+    .page { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 1fr auto auto; grid-template-areas: "status brand" "hero hero" "colophon colophon" "action action"; row-gap: clamp(12px, 2.6vh, 28px); min-block-size: 0; }
+    .hero { align-self: end; gap: 8px; }
+    .title { font-size: clamp(64px, 24vw, 150px); }
+    .lede { font-size: clamp(17px, 4.6vw, 24px); }
+    .brand img { inline-size: clamp(64px, 18vw, 110px); }
+    .colophon { max-inline-size: none; }
+    .action { justify-items: stretch; text-align: center; }
+    .cta { justify-content: center; }
+  }
+  @media (max-height: 600px) and (orientation: portrait), (max-height: 520px) { .colophon { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .cta { transition: none; } .cta:hover { transform: none; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#enter">דילוג לכניסה</a>
+<canvas class="backdrop" data-backdrop aria-hidden="true"></canvas>
+<main class="page">
+  <p class="status"><span class="status__mark" aria-hidden="true"></span><span lang="en" dir="ltr">CLOUD-NYA // MADAF</span></p>
+  <div class="brand"><img src="/assets/brand/cloud-nya-logo.png" width="477" height="286" alt="CLOUD-NYA"></div>
+  <div class="hero">
+    <h1 class="title">מדף</h1>
+    <p class="lede">הזמנות לעסקים, מלאי ואישורים, במקום אחד.</p>
+  </div>
+  <ul class="colophon" aria-label="על המערכת">
+    <li><strong>קטלוג והזמנות</strong><span>לעסקים מאושרים</span></li>
+    <li><strong>מלאי</strong><span>מעודכן בכל הזמנה</span></li>
+    <li><strong>גישה</strong><span>חשבונות Google מורשים</span></li>
+  </ul>
+  <div class="action">
+    <a class="cta" id="enter" href="/app/" aria-describedby="enter-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 17l-5-5 5-5M5 12h11M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></svg>
+      <span>כניסה למדף</span>
+    </a>
+    <p class="hint" id="enter-hint">ההתחברות עם חשבון Google. הגישה לחשבונות מורשים בלבד.</p>
+  </div>
+</main>
+<script>
+"use strict";
+// הרקע הוא קישוט בלבד: הדף שלם ונגיש גם בלי JavaScript וגם עם prefers-reduced-motion (פריים סטטי).
+const CONFIG = Object.freeze({ effects: true });
+const TIMING = Object.freeze({ resizeDebounce: 150 });
+const $ = (selector, root = document) => root.querySelector(selector);
+function debounce(fn, ms) { let timer = 0; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); }; }
+const Prefs = {
+  motion: matchMedia("(prefers-reduced-motion: reduce)"),
+  finePointer: matchMedia("(hover: hover) and (pointer: fine)"),
+  coarse: matchMedia("(pointer: coarse)"),
+  get reducedMotion() { return this.motion.matches; },
+  get animate() { return CONFIG.effects && !this.reducedMotion; },
+  get compact() { return innerWidth < 720 || this.coarse.matches; },
+};
+const Fit = { apply() {} };
+
+/* ── רקע: לולאת אנימציה (מתוך דף ShadowDance) ── */
+const Backdrop = {
+  scene: null,
+  canvas: null,
+  ctx: null,
+  raf: 0,
+  last: 0,
+  time: 0,
+  width: 0,
+  height: 0,
+  dpr: 1,
+  pointer: { x: 0, y: 0, tx: 0, ty: 0 },
+
+  init(scene) {
+    this.scene = scene;
+    this.canvas = $("[data-backdrop]");
+    this.ctx = this.canvas.getContext("2d");
+    this.tick = this.tick.bind(this);
+    this.measure();
+    scene.init(this);
+    window.addEventListener("resize", debounce(() => this.relayout(), TIMING.resizeDebounce));
+    // גלילה אפשרית רק בזום גבוה או עם מקלדת וירטואלית; הסצנה מתעדכנת למיקום התוכן.
+    window.addEventListener("scroll", () => {
+      this.scene.layout();
+      if (!this.raf) this.drawStatic();
+    }, { passive: true });
+    document.addEventListener("visibilitychange", () => this.sync());
+    Prefs.motion.addEventListener("change", () => this.sync());
+    // אינטראקציית עכבר: דסקטופ בלבד, עדינה.
+    if (Prefs.finePointer.matches) {
+      window.addEventListener("pointermove", (event) => {
+        this.pointer.tx = (event.clientX / this.width) * 2 - 1;
+        this.pointer.ty = (event.clientY / this.height) * 2 - 1;
+      }, { passive: true });
+    }
+    this.sync();
+  },
+
+  measure() {
+    // devicePixelRatio מוגבל ל-1.5 לטובת ביצועים.
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = Math.round(this.width * this.dpr);
+    this.canvas.height = Math.round(this.height * this.dpr);
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+  },
+
+  relayout() {
+    Fit.apply();
+    this.measure();
+    this.scene.resize(this);
+    if (!this.raf) this.drawStatic();
+  },
+
+  sync() {
+    const run = Prefs.animate && !document.hidden;
+    if (run && !this.raf) {
+      this.last = performance.now();
+      this.raf = requestAnimationFrame(this.tick);
+    } else if (!run) {
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+      if (!document.hidden) this.drawStatic();
+    }
+  },
+
+  tick(now) {
+    // תנועה מבוססת זמן; dt מוגבל ל-50ms כדי שקפיצה בפריים לא תזניק את הסצנה.
+    const dt = Math.min((now - this.last) / 1000, 0.05);
+    this.last = now;
+    this.time += dt;
+    const ease = 1 - Math.exp(-dt * 2.5);
+    this.pointer.x += (this.pointer.tx - this.pointer.x) * ease;
+    this.pointer.y += (this.pointer.ty - this.pointer.y) * ease;
+    this.scene.frame(dt, this.time);
+    this.raf = requestAnimationFrame(this.tick);
+  },
+
+  drawStatic() {
+    this.scene.still();
+  },
+
+  celebrate() {
+    if (Prefs.animate) this.scene.celebrate();
+  },
+};
+
+/* ════════════════════════════════════════════════════════════════
+   סצנה — אור בין עלים. קנבסים קטנים שמוגדלים: הטשטוש הוא צל רך אמיתי, בלי filter.
+   ════════════════════════════════════════════════════════════════ */
+const TAU = Math.PI * 2;
+const LIT = "#EFEDE6";     // קיר מואר בשמש
+const LIT_WARM = "#F6F2E8"; // קרוב יותר לחלון: מעט חם ובהיר יותר
+const SHADE = "#C8CCD4";   // קיר בצל: כחלחל, מואר בשמיים. נבחר כך שטקסט Graphite שומר על ≥4.5:1
+const PATCH = [[0.1, -0.08], [0.86, -0.03], [1.1, 1.1], [0.27, 1.07]]; // השמש דרך החלון, בשברי מסך
+
+function seededRandom(seed) {
+  return () => {
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const gaussian = (rand) => (rand() + rand() + rand() - 1.5) / 0.5;
+const mix = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
+
+const LeafScene = {
+  init(backdrop) {
+    this.bd = backdrop;
+    this.light = document.createElement("canvas");
+    this.leaves = document.createElement("canvas");
+    this.lightSoft = document.createElement("canvas");
+    this.leavesSoft = document.createElement("canvas");
+    this.lightCtx = this.light.getContext("2d");
+    this.leafCtx = this.leaves.getContext("2d");
+    this.lightSoftCtx = this.lightSoft.getContext("2d");
+    this.leavesSoftCtx = this.leavesSoft.getContext("2d");
+    this.rand = seededRandom(Date.now() & 0xffff);
+    this.gust = { wait: 14 + this.rand() * 10, age: -1 };
+    this.falling = [];
+    this.shadowVars = "";
+    this.resize();
+  },
+
+  resize() {
+    const { width, height } = this.bd;
+    // שתי השכבות ברבע רזולוציה; הטשטוש של העלים חזק יותר (רחוקים יותר מהקיר).
+    this.light.width = this.lightSoft.width = Math.ceil(width / 4);
+    this.light.height = this.lightSoft.height = Math.ceil(height / 4);
+    this.leaves.width = this.leavesSoft.width = Math.ceil(width / 4);
+    this.leaves.height = this.leavesSoft.height = Math.ceil(height / 4);
+    this.seed();
+  },
+
+  layout() {},
+
+  seed() {
+    const rand = seededRandom(4664);
+    const { width: W, height: H } = this.bd;
+    const unit = Math.max(W, H);
+    const compact = Prefs.compact;
+    const anchors = compact
+      ? [[0.62, 0.03], [0.3, 0.16], [0.86, 0.3], [0.5, 0.5], [0.2, 0.93]]
+      : [[0.97, 0.02], [0.7, -0.05], [0.44, 0.02], [0.16, 0.16], [1.04, 0.5], [0.86, 0.98], [0.02, 0.86]];
+    this.clusters = anchors.map(([fx, fy], i) => {
+      const spread = unit * (0.075 + rand() * 0.06);
+      const count = compact ? 70 : 120;
+      return {
+        x: fx * W, y: fy * H,
+        sway: unit * (0.006 + rand() * 0.005), f: (0.3 + rand() * 0.3) * TAU, p: rand() * TAU,
+        twig: { dx: (rand() - 0.5) * unit * 0.25, dy: -unit * (0.18 + rand() * 0.1) },
+        leaves: Array.from({ length: count }, () => {
+          const r = Math.abs(gaussian(rand)) * spread;
+          const a = rand() * TAU;
+          return {
+            x: Math.cos(a) * r, y: Math.sin(a) * r * 0.8,
+            rx: unit * (0.011 + rand() * 0.011), ry: unit * (0.005 + rand() * 0.005),
+            rot: rand() * TAU, f: (1.4 + rand() * 1.8) * TAU, p: rand() * TAU, amp: 0.12 + rand() * 0.18,
+          };
+        }),
+        index: i,
+      };
+    });
+  },
+
+  frame(dt, t) {
+    this.updateGust(dt);
+    this.updateFalling(dt);
+    const p = this.bd.pointer;
+    this.draw(t, p.x, p.y, this.gustLevel());
+    this.updateUiShadows(p.x, p.y);
+  },
+
+  still() {
+    this.falling = [];
+    this.draw(5.2, 0, 0, 0);
+  },
+
+  /* רגע נדיר: משב רוח מזדמן, כל 25–45 שניות */
+  updateGust(dt) {
+    const g = this.gust;
+    if (g.age >= 0) {
+      g.age += dt;
+      if (g.age > 4) { g.age = -1; g.wait = 25 + this.rand() * 20; }
+    } else if ((g.wait -= dt) <= 0) {
+      g.age = 0;
+    }
+  },
+
+  gustLevel() {
+    const a = this.gust.age;
+    return a < 0 ? 0 : Math.pow(Math.sin(Math.PI * a / 4), 2);
+  },
+
+  /* חגיגה: צללים של עלים נושרים חוצים את הקיר */
+  celebrate() {
+    const { width: W, height: H } = this.bd;
+    const unit = Math.max(W, H);
+    this.falling = Array.from({ length: Prefs.compact ? 9 : 15 }, (_, i) => ({
+      x: W * (0.05 + 0.9 * this.rand()), y: -H * (0.05 + 0.35 * this.rand()) - i * 6,
+      vy: H * (0.22 + 0.12 * this.rand()), drift: unit * (0.02 + 0.03 * this.rand()),
+      size: unit * (0.012 + 0.008 * this.rand()), f: 1.2 + this.rand() * 1.6, p: this.rand() * TAU, age: 0,
+    }));
+  },
+
+  updateFalling(dt) {
+    if (!this.falling.length) return;
+    for (const leaf of this.falling) { leaf.age += dt; leaf.y += leaf.vy * dt; }
+    this.falling = this.falling.filter((leaf) => leaf.y < this.bd.height * 1.1 && leaf.age < 7);
+  },
+
+  /* הצל של ה-CTA והמודאל נגזר ממיקום השמש */
+  updateUiShadows(px, py) {
+    const sx = (1 + px * 0.25).toFixed(2), sy = (1.4 + py * 0.25).toFixed(2);
+    const key = sx + sy;
+    if (key === this.shadowVars) return;
+    this.shadowVars = key;
+    document.documentElement.style.setProperty("--sx", sx);
+    document.documentElement.style.setProperty("--sy", sy);
+  },
+
+  draw(t, px, py, gust) {
+    const { ctx, width: W, height: H } = this.bd;
+    const ox = -px * 14, oy = -py * 10; // השמש זזה מעט עם העכבר; הצללים בכיוון ההפוך
+
+    // שכבת אור: קיר בצל, טלאי שמש, ומוטות החלון
+    const lc = this.lightCtx, ls = this.light.width / W;
+    lc.setTransform(ls, 0, 0, ls, 0, 0);
+    lc.fillStyle = SHADE;
+    lc.fillRect(0, 0, W, H);
+    const pts = PATCH.map(([fx, fy]) => [fx * W + ox, fy * H + oy]);
+    const sun = lc.createLinearGradient(pts[0][0], pts[0][1], pts[2][0], pts[2][1]);
+    sun.addColorStop(0, LIT_WARM);
+    sun.addColorStop(1, LIT);
+    lc.fillStyle = sun;
+    this.polygon(lc, pts);
+    lc.fillStyle = SHADE;
+    const bar = Math.max(W, H) * 0.011;
+    this.bar(lc, mix(pts[0], pts[1], 0.52), mix(pts[3], pts[2], 0.5), bar);
+    this.bar(lc, mix(pts[0], pts[3], 0.42), mix(pts[1], pts[2], 0.46), bar);
+
+    // שכבת עלים: אטומה בצבע הצל, כדי שחפיפה לא תכהה פעמיים
+    const fc = this.leafCtx, fs = this.leaves.width / W;
+    fc.setTransform(1, 0, 0, 1, 0, 0);
+    fc.clearRect(0, 0, this.leaves.width, this.leaves.height);
+    fc.setTransform(fs, 0, 0, fs, 0, 0);
+    fc.fillStyle = SHADE;
+    fc.strokeStyle = SHADE;
+    fc.lineCap = "round";
+    const wind = 1 + gust * 1.6;
+    for (const c of this.clusters) {
+      const sway = Math.sin(t * c.f + c.p) * c.sway * wind + gust * c.sway * 1.4;
+      const cx = c.x + sway + ox * 1.6, cy = c.y + Math.cos(t * c.f * 0.7 + c.p) * c.sway * 0.35 + oy * 1.6;
+      fc.lineWidth = Math.max(W, H) * 0.0035;
+      fc.beginPath();
+      fc.moveTo(cx + c.twig.dx, cy + c.twig.dy);
+      fc.quadraticCurveTo(cx + c.twig.dx * 0.2 - sway, cy + c.twig.dy * 0.45, cx, cy);
+      fc.stroke();
+      fc.beginPath();
+      for (const leaf of c.leaves) {
+        const flutter = Math.sin(t * leaf.f * (1 + gust * 0.8) + leaf.p);
+        const x = cx + leaf.x + flutter * leaf.rx * 0.25 * wind;
+        const y = cy + leaf.y + flutter * leaf.ry * 0.4;
+        const rot = leaf.rot + flutter * leaf.amp * wind;
+        fc.moveTo(x + Math.cos(rot) * leaf.rx, y + Math.sin(rot) * leaf.rx);
+        fc.ellipse(x, y, leaf.rx, leaf.ry, rot, 0, TAU);
+      }
+      fc.fill();
+    }
+    if (this.falling.length) {
+      fc.beginPath();
+      for (const leaf of this.falling) {
+        const x = leaf.x + Math.sin(leaf.age * leaf.f + leaf.p) * leaf.drift + ox * 1.6;
+        const tumble = Math.cos(leaf.age * leaf.f * 1.7 + leaf.p);
+        const rx = leaf.size * (0.35 + 0.65 * Math.abs(tumble));
+        const rot = 0.6 * Math.sin(leaf.age * leaf.f + leaf.p);
+        fc.moveTo(x + Math.cos(rot) * rx, leaf.y + Math.sin(rot) * rx);
+        fc.ellipse(x, leaf.y, rx, leaf.size * 0.45, rot, 0, TAU);
+      }
+      fc.fill();
+    }
+
+    // טשטוש על הקנבס הקטן (זול). העלים רחוקים מהקיר יותר מהחלון, ולכן רכים יותר.
+    this.soften(this.lightSoftCtx, this.light, 1.1);
+    this.soften(this.leavesSoftCtx, this.leaves, 1.25);
+
+    ctx.setTransform(this.bd.dpr, 0, 0, this.bd.dpr, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(this.lightSoft, 0, 0, W, H);
+    ctx.globalAlpha = 0.9; // מעט אור עובר דרך העלים
+    ctx.drawImage(this.leavesSoft, 0, 0, W, H);
+    ctx.globalAlpha = 1;
+  },
+
+  soften(target, source, radius) {
+    target.setTransform(1, 0, 0, 1, 0, 0);
+    target.clearRect(0, 0, source.width, source.height);
+    target.filter = `blur(${radius}px)`; // דפדפן ללא תמיכה: נשאר הטשטוש של ההגדלה בלבד
+    target.drawImage(source, 0, 0);
+    target.filter = "none";
+  },
+
+  polygon(c, pts) {
+    c.beginPath();
+    c.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]);
+    c.closePath();
+    c.fill();
+  },
+
+  bar(c, a, b, width) {
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    const len = Math.hypot(dx, dy) || 1;
+    const nx = (-dy / len) * width / 2, ny = (dx / len) * width / 2;
+    this.polygon(c, [[a[0] + nx, a[1] + ny], [b[0] + nx, b[1] + ny], [b[0] - nx, b[1] - ny], [a[0] - nx, a[1] - ny]]);
+  },
+};
+
+Backdrop.init(LeafScene);
+</script>
+</body>
+</html>

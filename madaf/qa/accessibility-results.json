@@ -1,0 +1,33 @@
+[
+  {
+    "name": "login",
+    "violations": [],
+    "incomplete": []
+  },
+  {
+    "name": "catalog",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "name": "quick",
+    "violations": [],
+    "incomplete": []
+  },
+  {
+    "name": "admin-order",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  {
+    "name": "product-editor",
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  }
+]
