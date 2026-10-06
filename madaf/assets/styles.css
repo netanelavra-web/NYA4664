@@ -14,3 +14,29 @@
 .brand-logo{display:block;inline-size:min(260px,62vw);block-size:auto}
 .google-login{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;font-size:17px}
 .google-login svg{inline-size:20px;block-size:20px;flex:none}
+/* ── Motion & lighter surfaces (v2.2) ───────────────────────────── */
+:root{--shadow:0 14px 44px #24271f12;--ease-out:cubic-bezier(.2,.8,.2,1)}
+.logo img{display:block;block-size:30px;inline-size:auto}
+.topbar{background:#f3efe7e6;border-bottom-color:#deded180}
+/* Overlays: fade in, drawers slide from their edge (RTL: nav right, tools left), and leave the same way */
+@keyframes fade-in{from{opacity:0}}
+@keyframes fade-out{to{opacity:0}}
+@keyframes from-right{from{transform:translateX(100%)}}
+@keyframes from-left{from{transform:translateX(-100%)}}
+@keyframes to-right{to{transform:translateX(100%)}}
+@keyframes to-left{to{transform:translateX(-100%)}}
+@keyframes dialog-out{to{opacity:0;transform:translateY(14px) scale(.985)}}
+@keyframes view-in{from{opacity:0;transform:translateY(8px)}}
+.overlay{animation:fade-in .22s ease}
+.drawer{animation:from-right .32s var(--ease-out);box-shadow:0 0 40px #24271f1f}
+.drawer.tools{animation-name:from-left}
+.overlay.closing{animation:fade-out .22s ease forwards;pointer-events:none}
+.overlay.closing .drawer{animation:to-right .24s var(--ease-out) forwards}
+.overlay.closing .drawer.tools{animation-name:to-left}
+.overlay.closing .dialog{animation:dialog-out .2s ease forwards}
+main.page.view-enter{animation:view-in .3s var(--ease-out)}
+/* Living cart: light surface; on wide screens it is anchored to the side from the start and only grows upward */
+.living{background:var(--surface);color:var(--ink);border:1px solid var(--line);transition:height .32s var(--ease-out),box-shadow .32s ease}
+.living .primary{background:var(--clay);color:#fff}
+.living.expanded{box-shadow:0 24px 70px #24271f22}
+@media(min-width:1200px){.living,.living.expanded{left:3vw;right:auto;width:360px;max-width:360px;margin:0;bottom:25px}body .catalog{transition:margin .32s var(--ease-out)}}

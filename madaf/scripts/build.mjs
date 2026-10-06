@@ -23,6 +23,8 @@ html=html.replace(/<link[^>]+href=["'](?:\.\/)?assets\/styles\.css["'][^>]*>/,()
 html=html.replace(/<script[^>]+src=["'](?:\.\/)?src\/app\.mjs["'][^>]*><\/script>/,()=>'<script>\n(async()=>{\n'+chunks.join('\n')+'\n})();\n</script>');
 html=html.replace('<script src="firebase-config.js"></script>','<script>window.MADAF_FIREBASE_CONFIG=null;</script>');
 if(html.includes('src/app.mjs'))throw new Error('App script replacement failed');
+// The standalone preview has no assets folder next to it: inline brand images as data URIs.
+html=html.replaceAll('assets/brand/madaf-logo.png','data:image/png;base64,'+fs.readFileSync(path.join(root,'assets/brand/madaf-logo.png')).toString('base64'));
 fs.mkdirSync(path.join(root,'dist'),{recursive:true});fs.writeFileSync(path.join(root,'dist/Madaf_V2_Preview.html'),html);
 console.log('Built standalone HTML:',Buffer.byteLength(html),'bytes');
 
